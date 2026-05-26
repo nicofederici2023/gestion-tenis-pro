@@ -911,6 +911,10 @@ h1, h2, h3 {
 
 /* Detailed List Item for Group Expenses */
 .expense-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--border);
   transition: background-color 0.2s;
 }
