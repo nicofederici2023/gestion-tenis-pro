@@ -1,0 +1,299 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '../config/supabase';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { Plus, MoreVertical, Edit2, Trash2 } from 'lucide-react';
+
+export default function Dashboard() {
+  const { user } = useAuth();
+  const [groups, setGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Modal / Menu state
+  const [showModal, setShowModal] = useState(false);
+  const [newGroupName, setNewGroupName] = useState('');
+  const [newGroupDesc, setNewGroupDesc] = useState('');
+
+  const [activeGroupMenu, setActiveGroupMenu] = useState(null);
+  const [editingGroup, setEditingGroup] = useState(null);
+  const [editGroupName, setEditGroupName] = useState('');
+  const [editGroupDesc, setEditGroupDesc] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+
+  const fetchGroups = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('group_members')
+        .select(`
+          group_id,
+          groups (*)
+        `)
+        .eq('profile_id', user.id);
+
+      if (error) throw error;
+      setGroups(data.map(d => d.groups).filter(Boolean));
+    } catch (error) {
+      console.error('Error fetching groups:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGroups();
+  }, [user]);
+
+  useEffect(() => {
+    const handleGlobalClick = () => {
+      setActiveGroupMenu(null);
+    };
+    window.addEventListener('click', handleGlobalClick);
+    return () => window.removeEventListener('click', handleGlobalClick);
+  }, []);
+
+  const handleCreateGroup = async (e) => {
+    e.preventDefault();
+    try {
+      // Create group
+      const { data: group, error } = await supabase
+        .from('groups')
+        .insert([{
+          name: newGroupName,
+          description: newGroupDesc,
+          creator_id: user.id
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Add as member
+      await supabase
+        .from('group_members')
+        .insert([{
+          group_id: group.id,
+          profile_id: user.id
+        }]);
+
+      setShowModal(false);
+      setNewGroupName('');
+      setNewGroupDesc('');
+      fetchGroups(); // reload
+    } catch (error) {
+      console.error('Error creating group:', error.message);
+    }
+  };
+
+  const handleEditGroup = async (e) => {
+    e.preventDefault();
+    if (!editingGroup) return;
+
+    try {
+      const { error } = await supabase
+        .from('groups')
+        .update({
+          name: editGroupName,
+          description: editGroupDesc
+        })
+        .eq('id', editingGroup.id)
+        .eq('creator_id', user.id);
+
+      if (error) throw error;
+      setEditingGroup(null);
+      fetchGroups();
+    } catch (error) {
+      console.error('Error updating group:', error.message);
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    if (!showDeleteConfirm) return;
+
+    try {
+      const { error } = await supabase
+        .from('groups')
+        .delete()
+        .eq('id', showDeleteConfirm.id)
+        .eq('creator_id', user.id);
+
+      if (error) throw error;
+      setShowDeleteConfirm(null);
+      fetchGroups();
+    } catch (error) {
+      console.error('Error deleting group:', error.message);
+    }
+  };
+
+  return (
+    <div>
+      <div className="header mb-6" style={{ margin: '-1.5rem -1.5rem 1.5rem -1.5rem' }}>
+        <h1 className="text-xl">Mis Torneos y Gastos</h1>
+        <button 
+          onClick={() => setShowModal(true)} 
+          className="btn btn-primary" 
+          style={{ width: 'auto', padding: '0.5rem 1.25rem' }}
+        >
+          <Plus size={18} className="mr-1" /> Nuevo
+        </button>
+      </div>
+
+      {loading ? (
+        <p className="text-center text-muted">Cargando...</p>
+      ) : groups.length === 0 ? (
+        <div className="text-center py-10">
+          <p className="text-muted mb-4">No tienes ningún torneo o gasto registrado todavía.</p>
+          <button onClick={() => setShowModal(true)} className="btn btn-secondary" style={{width: 'auto'}}>
+            Crear tu primer torneo
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {groups.map(group => {
+            const isCreator = group.creator_id === user.id;
+            return (
+              <div key={group.id} style={{ position: 'relative' }}>
+                <Link to={`/group/${group.id}`} style={{textDecoration: 'none', display: 'block'}}>
+                  <div className="card" style={{ marginBottom: 0, paddingRight: '3.5rem' }}>
+                    <h3>{group.name}</h3>
+                    {group.description && <p className="text-sm text-muted mt-1">{group.description}</p>}
+                    <div className="mt-3 text-xs text-muted">
+                      Creado el {new Date(group.created_at).toLocaleDateString()} {isCreator && ' • Creador'}
+                    </div>
+                  </div>
+                </Link>
+
+                {isCreator && (
+                  <div style={{ position: 'absolute', right: '1.25rem', top: '1.25rem', zIndex: 5 }}>
+                    <button
+                      className="context-menu-trigger"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setActiveGroupMenu(activeGroupMenu === group.id ? null : group.id);
+                      }}
+                    >
+                      <MoreVertical size={20} />
+                    </button>
+                    
+                    {activeGroupMenu === group.id && (
+                      <div className="context-menu-dropdown" style={{ right: 0, top: '2.5rem' }}>
+                        <button
+                          className="context-menu-item"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setEditingGroup(group);
+                            setEditGroupName(group.name);
+                            setEditGroupDesc(group.description || '');
+                            setActiveGroupMenu(null);
+                          }}
+                        >
+                          <Edit2 size={16} /> Editar
+                        </button>
+                        <button
+                          className="context-menu-item danger"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setShowDeleteConfirm(group);
+                            setActiveGroupMenu(null);
+                          }}
+                        >
+                          <Trash2 size={16} /> Eliminar
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Modal Crear Gasto */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="card w-full animate-fade-in" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+            <h2 className="mb-4">Nuevo Torneo</h2>
+            <form onSubmit={handleCreateGroup}>
+              <div className="input-group">
+                <label>Nombre (ej. Torneo Interclubes)</label>
+                <input 
+                  type="text" 
+                  className="input" 
+                  value={newGroupName}
+                  onChange={(e) => setNewGroupName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <label>Descripción (Opcional)</label>
+                <input 
+                  type="text" 
+                  className="input" 
+                  value={newGroupDesc}
+                  onChange={(e) => setNewGroupDesc(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-2 mt-6">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
+                <button type="submit" className="btn btn-primary">Crear</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Editar Gasto */}
+      {editingGroup && (
+        <div className="modal-overlay" onClick={() => setEditingGroup(null)}>
+          <div className="card w-full animate-fade-in" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+            <h2 className="mb-4">Editar Torneo</h2>
+            <form onSubmit={handleEditGroup}>
+              <div className="input-group">
+                <label>Nombre</label>
+                <input 
+                  type="text" 
+                  className="input" 
+                  value={editGroupName}
+                  onChange={(e) => setEditGroupName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <label>Descripción</label>
+                <input 
+                  type="text" 
+                  className="input" 
+                  value={editGroupDesc}
+                  onChange={(e) => setEditGroupDesc(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-2 mt-6">
+                <button type="button" className="btn btn-secondary" onClick={() => setEditingGroup(null)}>Cancelar</button>
+                <button type="submit" className="btn btn-primary">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Confirmar Eliminación */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay">
+          <div className="card w-full animate-fade-in" style={{ maxWidth: '400px' }}>
+            <h2 className="mb-4 text-danger">¿Eliminar Torneo?</h2>
+            <p className="text-sm text-muted mb-6">
+              Esta acción eliminará de forma permanente el torneo <strong>{showDeleteConfirm.name}</strong>, todos sus detalles, saldos y participantes registrados. Esta acción no se puede deshacer.
+            </p>
+            <div className="flex gap-2">
+              <button type="button" className="btn btn-secondary" onClick={() => setShowDeleteConfirm(null)}>Cancelar</button>
+              <button type="button" className="btn btn-danger" onClick={handleDeleteGroup} style={{ backgroundColor: 'var(--danger)', color: 'white' }}>Eliminar</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

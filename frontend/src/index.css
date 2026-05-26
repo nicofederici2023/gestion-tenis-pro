@@ -1,0 +1,887 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #0284c7; /* Championship Court Blue */
+  --primary-hover: #0369a1;
+  --primary-light: rgba(2, 132, 199, 0.15);
+  --secondary: #ccff00; /* Optic Tennis Ball Yellow */
+  --secondary-hover: #b5e600;
+  --secondary-light: rgba(204, 255, 0, 0.15);
+  --background: #090d16; /* Dark Slam Night Session background */
+  --surface: #131b2e; /* Premium Dark card surface */
+  --text-main: #f8fafc; /* Crisp white main text */
+  --text-muted: #94a3b8;
+  --border: #1e293b; /* Subtle steel court border */
+  --danger: #ff2a2a; 
+  --danger-light: rgba(255, 42, 42, 0.15);
+  --radius: 16px;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
+}
+
+/* Dark Mode Support (Enforced Dark Theme for Premium Sports Night Vibe) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #0284c7;
+    --primary-hover: #0369a1;
+    --primary-light: rgba(2, 132, 199, 0.15);
+    --background: #090d16;
+    --surface: #131b2e;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #1e293b;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--background);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+  max-width: 600px; /* Mobile first / PWA focus */
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: transparent;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Layouts */
+.header {
+  padding: 1.25rem 1.5rem;
+  background: rgba(31, 40, 51, 0.75);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .header {
+    background-color: rgba(11, 12, 16, 0.75);
+  }
+}
+
+.content {
+  padding: 1.25rem 1.5rem;
+  padding-bottom: 6rem; /* Space for bottom nav */
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  pointer-events: none; /* Let background clicks pass through empty spaces/margins */
+}
+
+.content > * {
+  pointer-events: auto; /* Re-enable clicks for cards, lists, buttons, etc. */
+}
+
+/* Typography */
+h1, h2, h3 {
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+.text-muted { color: var(--text-muted); }
+.text-sm { font-size: 0.875rem; }
+
+/* Components */
+.card {
+  background: rgba(31, 40, 51, 0.75);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: none;
+}
+.btn-secondary:hover {
+  background-color: rgba(99, 102, 241, 0.18);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background-color: var(--danger-light);
+  color: var(--danger);
+  border: none;
+}
+.btn-danger:hover {
+  background-color: rgba(244, 63, 94, 0.18);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.input-group {
+  margin-bottom: 1.25rem;
+}
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+/* Utilities */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.justify-between { justify-content: space-between; }
+.items-center { align-items: center; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.mt-4 { margin-top: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.text-center { text-align: center; }
+.text-danger { color: var(--danger); }
+.text-success { color: var(--secondary); }
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  background: rgba(31, 40, 51, 0.8);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  padding: 0.85rem 0;
+  z-index: 10;
+  box-shadow: 0 -10px 20px rgba(0,0,0,0.3);
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  gap: 0.35rem;
+  transition: color 0.2s;
+}
+.nav-item.active {
+  color: var(--primary);
+}
+
+/* Modal Overlay (Glassmorphism) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 50;
+  display: block;
+  padding: 1rem;
+  overflow-y: auto;
+  animation: fadeInOverlay 0.2s ease-out;
+}
+
+.modal-overlay .card {
+  margin: 4rem auto 2rem auto;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Tabs: Premium Rounded Pill Design */
+.tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  border: none;
+  gap: 2px;
+}
+@media (prefers-color-scheme: dark) {
+  .tabs {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  border: none;
+  background: transparent;
+  border-radius: 11px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tab.active {
+  color: white;
+  background-color: var(--primary);
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+}
+@media (prefers-color-scheme: dark) {
+  .tab.active {
+    color: #0F172A;
+    background-color: #F8FAFC;
+    box-shadow: 0 4px 10px rgba(248, 250, 252, 0.15);
+  }
+}
+
+/* Context Menu / Dropdown styles */
+.context-menu-trigger {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+.context-menu-trigger:hover {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.context-menu-dropdown {
+  position: absolute;
+  right: 1.5rem;
+  top: 3.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  z-index: 20;
+  min-width: 150px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.context-menu-item {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-main);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.15s;
+}
+.context-menu-item:hover {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+.context-menu-item.danger:hover {
+  background-color: var(--danger-light);
+  color: var(--danger);
+}
+
+/* Tennis Court Background & Sparks Styles */
+.tennis-bg-container {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--background);
+  background-image: radial-gradient(circle at 50% 20%, rgba(2, 132, 199, 0.25) 0%, var(--background) 80%);
+}
+
+.tennis-balls-interactive-container {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.tennis-toasts-container {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.court-spark {
+  position: absolute;
+  background-color: #ffffff;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: sparkTwinkle 4s infinite ease-in-out;
+}
+
+@keyframes sparkTwinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 0.8; transform: scale(1.4); }
+}
+
+/* Stadium lights reflections */
+.stadium-lights-left, .stadium-lights-right {
+  position: absolute;
+  top: 0;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(204,255,0,0.03) 50%, transparent 80%);
+  pointer-events: none;
+}
+.stadium-lights-left { left: 0; }
+.stadium-lights-right { right: 0; }
+
+.tennis-court-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 250px;
+  z-index: 1;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.tennis-court-wrapper path,
+.tennis-court-wrapper svg {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  user-select: none;
+}
+
+/* Pulse target */
+.target-pulse {
+  transform-origin: 500px 210px;
+  animation: targetPulse 2s infinite ease-in-out alternate;
+}
+
+@keyframes targetPulse {
+  0% { opacity: 0.6; fill: var(--secondary); filter: drop-shadow(0 0 5px var(--secondary)); }
+  100% { opacity: 1; fill: #ffffff; filter: drop-shadow(0 0 15px var(--secondary)) drop-shadow(0 0 25px var(--primary)); }
+}
+
+/* Draggable Tennis Ball */
+.tennis-ball-interactive {
+  position: absolute;
+  pointer-events: auto;
+  cursor: grab;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s;
+}
+
+.tennis-ball-interactive:active {
+  cursor: grabbing;
+}
+
+.tennis-ball-interactive svg {
+  width: 44px;
+  height: 44px;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px var(--secondary));
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s;
+}
+
+.tennis-ball-interactive.dragging svg {
+  transform: scale(1.35) rotate(45deg);
+  filter: drop-shadow(0 0 12px var(--secondary)) drop-shadow(0 0 20px var(--primary));
+}
+
+/* Ball rally animations */
+.ball-left-rally {
+  animation: ballRallyLeft 14s infinite linear;
+}
+
+@keyframes ballRallyLeft {
+  0% {
+    left: calc(110% - 30px);
+    top: 10%;
+    transform: scale(1) rotate(-15deg);
+    opacity: 0;
+  }
+  5% { opacity: 1; }
+  65% {
+    left: calc(55% - 30px);
+    top: 48%;
+    transform: scale(0.7) rotate(-45deg);
+    opacity: 0.9;
+  }
+  80%, 100% {
+    left: calc(50% - 30px);
+    top: calc(100% - 190px);
+    transform: scale(0) rotate(-90deg);
+    opacity: 0;
+  }
+}
+
+.ball-right-rally {
+  animation: ballRallyRight 16s infinite linear;
+  animation-delay: 6s;
+  opacity: 0;
+}
+
+@keyframes ballRallyRight {
+  0%, 10% {
+    left: calc(50% - 30px);
+    top: calc(100% - 190px);
+    transform: scale(0) rotate(90deg);
+    opacity: 0;
+  }
+  15% { opacity: 1; }
+  75% {
+    left: calc(20% - 30px);
+    top: 30%;
+    transform: scale(0.85) rotate(45deg);
+    opacity: 0.9;
+  }
+  90%, 100% {
+    left: -60px;
+    top: 15%;
+    transform: scale(1.1) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+.ball-center-hover {
+  animation: ballHoverCenter 18s infinite ease-in-out;
+  left: calc(50% - 30px);
+  top: calc(100% - 245px); /* Just above net */
+}
+
+.ball-center-hover svg {
+  filter: drop-shadow(0 0 8px var(--primary));
+}
+
+@keyframes ballHoverCenter {
+  0%, 100% { transform: translate(0, 0) scale(0.9); }
+  50% { transform: translate(30px, -15px) scale(1.15) rotate(90deg); }
+}
+
+/* High-velocity trail particles */
+.ball-trail-particle {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--secondary) 25%, rgba(2, 132, 199, 0.4) 65%, transparent 90%);
+  filter: drop-shadow(0 0 6px var(--secondary));
+  opacity: 0.9;
+  z-index: 4;
+  transform: translate(-50%, -50%);
+  animation: fadeOutBallParticle 0.4s forwards cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
+@keyframes fadeOutBallParticle {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1);
+  }
+}
+
+/* Court shockwave rings */
+.court-shockwave {
+  position: fixed;
+  border: 2.5px solid var(--secondary);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  animation: courtWave 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes courtWave {
+  0% {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+    border-color: var(--secondary);
+    filter: drop-shadow(0 0 5px var(--secondary));
+  }
+  50% {
+    border-color: var(--primary);
+    filter: drop-shadow(0 0 10px var(--primary));
+  }
+  100% {
+    width: 250px;
+    height: 250px;
+    opacity: 0;
+    border-color: #ffffff;
+    filter: drop-shadow(0 0 15px var(--primary));
+  }
+}
+
+/* Floating court toasts */
+.court-toast {
+  position: fixed;
+  pointer-events: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--secondary);
+  text-shadow: 0 0 8px var(--secondary), 0 0 15px var(--primary), 0 0 25px #ffffff;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  animation: floatUpCourtToast 1.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes floatUpCourtToast {
+  0% {
+    opacity: 0;
+    margin-top: 15px;
+    transform: translate(-50%, -50%) scale(0.6) rotate(-15deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.3) rotate(6deg);
+  }
+  80% { opacity: 1; }
+  100% {
+    opacity: 0;
+    margin-top: -95px;
+    transform: translate(-50%, -50%) scale(0.85) rotate(-6deg);
+  }
+}
+
+/* Smash/power shot state */
+.tennis-ball-interactive.boosted svg {
+  animation: smashShake 0.15s infinite linear alternate !important;
+  filter: drop-shadow(0 0 15px var(--secondary)) drop-shadow(0 0 25px #ffffff) !important;
+}
+
+@keyframes smashShake {
+  from { transform: scale(1.3) skewX(-10deg) translateY(-1px); }
+  to { transform: scale(1.3) skewX(-10deg) translateY(1px); }
+}
+
+.ball-left-rally.boosted { animation-duration: 2.2s !important; }
+.ball-right-rally.boosted { animation-duration: 2.5s !important; }
+.ball-center-hover.boosted { animation-duration: 3s !important; }
+
+/* Login screen container elements for Tennis Theme PWA widget */
+.login-page-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  overflow-y: auto;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.login-page-container > * {
+  pointer-events: auto;
+}
+
+.btn-register {
+  padding: 1.05rem 1.5rem !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 0 15px var(--primary-light), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  border-radius: 14px !important;
+}
+
+.btn-register:hover {
+  transform: translateY(-3px) scale(1.03) !important;
+  box-shadow: 0 0 25px var(--primary), 0 5px 15px rgba(0, 0, 0, 0.4) !important;
+  border-color: var(--secondary) !important;
+}
+
+.btn-register:active {
+  transform: translateY(-1px) scale(1.01) !important;
+}
+
+.btn-switch-register {
+  width: 100%;
+  padding: 0.95rem 1.25rem;
+  border-radius: 12px;
+  background-color: var(--primary-light);
+  color: var(--text-main);
+  border: 1px dashed var(--primary);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn-switch-register:hover {
+  background-color: rgba(2, 132, 199, 0.3);
+  border-style: solid;
+  border-color: var(--secondary);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+}
+
+.btn-switch-register:active {
+  transform: translateY(0);
+}
+
+/* PWA Install Widget on Login Screen */
+.login-pwa-card {
+  background: rgba(19, 27, 46, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(2, 132, 199, 0.4);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+  width: 100%;
+  margin-top: 1rem;
+  z-index: 1;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.login-pwa-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 8px 30px rgba(2, 132, 199, 0.25);
+}
+
+.login-pwa-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.login-pwa-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Sports Championship Celebration Easter Egg */
+.championship-celebration-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  pointer-events: none;
+  background-color: rgba(9, 13, 22, 0.85);
+  backdrop-filter: blur(8px);
+  animation: champFlash 0.3s ease-out forwards;
+}
+
+.champion-floating-icons {
+  font-size: 8rem;
+  filter: drop-shadow(0 0 15px var(--secondary)) drop-shadow(0 0 35px var(--primary));
+  animation: champPop 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.35) forwards;
+}
+
+.champion-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 900;
+  font-size: 2.2rem;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 10px var(--secondary), 0 0 25px var(--primary), 0 0 40px #ffffff;
+  margin-top: 1.5rem;
+  text-align: center;
+  padding: 0 1rem;
+  animation: champTextPop 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.25) forwards;
+}
+
+.champion-subtext {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #ffffff;
+  margin-top: 0.5rem;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  animation: champTextPop 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.25) forwards;
+  animation-delay: 0.1s;
+}
+
+/* Confetti Rain Style */
+.confetti-sparks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 20px;
+  top: -20px;
+  opacity: 0.8;
+  border-radius: 2px;
+  animation: confettiFall 3s linear infinite;
+}
+
+@keyframes confettiFall {
+  0% { top: -20px; transform: translateY(0) rotate(0deg); }
+  100% { top: 105%; transform: translateY(100vh) rotate(360deg) translateX(50px); }
+}
+
+@keyframes champFlash {
+  0% { background-color: rgba(204, 255, 0, 0.6); }
+  100% { background-color: rgba(9, 13, 22, 0.85); }
+}
+
+@keyframes champPop {
+  0% { transform: scale(0.1) rotate(-180deg); opacity: 0; }
+  15% { transform: scale(1.3) rotate(15deg); opacity: 1; }
+  20%, 80% { transform: scale(1) rotate(0deg); }
+  22%, 26%, 30% { transform: scale(1.1) translateY(-10px); }
+  24%, 28% { transform: scale(1) translateY(0); }
+  100% { transform: scale(0) rotate(180deg); opacity: 0; }
+}
+
+@keyframes champTextPop {
+  0%, 10% { opacity: 0; transform: translateY(30px); }
+  20%, 85% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-40px); }
+}
