@@ -430,7 +430,7 @@ export default function GroupDetail() {
             <button className="btn btn-primary mb-4" onClick={openExpenseModal}>
               <Plus size={18} /> Añadir Gasto
             </button>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               {expenses.length === 0 ? <p className="text-muted text-center py-4">No hay gastos aún.</p> : null}
               {expenses.map(exp => {
                 const isSettlement = exp.description.startsWith('Liquidación:');
@@ -438,7 +438,7 @@ export default function GroupDetail() {
 
                 if (isSettlement) {
                   return (
-                    <div key={exp.id} className="card p-4 mb-0 flex justify-between items-center" style={{ borderLeft: '4px solid var(--secondary)', background: 'var(--secondary-light)', marginBottom: '0.75rem' }}>
+                    <div key={exp.id} className="card p-4 mb-0 flex justify-between items-center" style={{ borderLeft: '4px solid var(--secondary)', background: 'var(--secondary-light)' }}>
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
                           <ArrowRightLeft size={18} />
@@ -476,7 +476,7 @@ export default function GroupDetail() {
                 }
 
                 return (
-                  <div key={exp.id} className="card p-4 mb-0 flex justify-between items-center" style={{ marginBottom: '0.75rem' }}>
+                  <div key={exp.id} className="card p-4 mb-0 flex justify-between items-center">
                     <div className="flex items-center gap-3">
                       {receiptUrl && (
                         <div className="shrink-0 relative cursor-pointer" onClick={() => setViewingReceiptUrl(receiptUrl)} title="Tocar para ampliar">
@@ -528,16 +528,16 @@ export default function GroupDetail() {
         )}
 
         {activeTab === 'balances' && (
-          <div>
+          <div className="card">
             <div className="mb-6">
-              <h2 className="mb-4 text-lg">Plan de Liquidación Óptimo 💡</h2>
+              <h2 className="mb-2 text-lg">Plan de Liquidación Óptimo 💡</h2>
               <p className="text-sm text-muted mb-4">Pagos mínimos recomendados para saldar todas las deudas.</p>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 {settlements.length === 0 ? (
-                  <p className="text-muted text-center py-4 bg-gray-50 rounded-lg">¡Todos están al día! No hay transacciones pendientes 🎉</p>
+                  <p className="text-muted text-center py-4 bg-white/5 rounded-lg text-sm">¡Todos están al día! No hay transacciones pendientes 🎉</p>
                 ) : null}
                 {settlements.map((setl, idx) => (
-                  <div key={idx} className="card p-4 mb-0 flex justify-between items-center border-l-4 border-l-emerald-500" style={{ marginBottom: '0.75rem' }}>
+                  <div key={idx} className="flex justify-between items-center py-3 border-b last:border-0 border-gray-100/10">
                     <div className="flex-1">
                       <span className="font-semibold text-danger">{setl.from_profile?.full_name || 'Alguien'}</span>
                       <span className="text-muted text-sm mx-1">debe pagarle a</span>
@@ -560,18 +560,18 @@ export default function GroupDetail() {
               </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-6 mt-6">
-              <h2 className="mb-4 text-lg text-muted">Historial / Saldos Cruzados</h2>
-              <div className="flex flex-col gap-3">
-                {balances.length === 0 ? <p className="text-muted text-center py-2">Sin saldos cruzados.</p> : null}
+            <div className="border-t border-gray-100/10 pt-6 mt-6">
+              <h2 className="mb-3 text-lg text-muted">Historial / Saldos Cruzados</h2>
+              <div className="flex flex-col gap-2">
+                {balances.length === 0 ? <p className="text-muted text-center py-2 text-sm">Sin saldos cruzados.</p> : null}
                 {balances.map(bal => (
-                  <div key={bal.id} className="card p-4 mb-0 flex justify-between items-center bg-gray-50 border-dashed">
-                    <div className="flex-1 text-sm">
+                  <div key={bal.id} className="flex justify-between items-center py-2 border-b last:border-0 border-gray-100/10 text-sm">
+                    <div className="flex-1">
                       <span className="font-medium text-danger">{bal.debtor?.full_name}</span>
                       <span className="text-muted mx-1">le debe a</span>
                       <span className="font-medium text-success">{bal.creditor?.full_name}</span>
                     </div>
-                    <div className="font-semibold text-sm">
+                    <div className="font-semibold">
                       ${(bal.amount_cents / 100).toFixed(2)}
                     </div>
                   </div>
