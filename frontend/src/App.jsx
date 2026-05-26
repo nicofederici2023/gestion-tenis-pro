@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { Home, UserCircle } from 'lucide-react';
+import { Home, UserCircle, BarChart3 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { PwaProvider } from './context/PwaContext';
 
@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import GroupDetail from './pages/GroupDetail';
 import Profile from './pages/Profile';
+import Reports from './pages/Reports';
 import InstallPrompt from './components/InstallPrompt';
 import TennisCourtBackground from './components/TennisCourtBackground';
 
@@ -26,6 +27,10 @@ const BottomNav = () => {
       <Link to="/" className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}>
         <Home size={24} />
         <span>Inicio</span>
+      </Link>
+      <Link to="/reports" className={`nav-item ${location.pathname === '/reports' ? 'active' : ''}`}>
+        <BarChart3 size={24} />
+        <span>Reportes</span>
       </Link>
       <Link to="/profile" className={`nav-item ${location.pathname === '/profile' ? 'active' : ''}`}>
         <UserCircle size={24} />
@@ -48,6 +53,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/group/:id" element={<ProtectedRoute><GroupDetail /></ProtectedRoute>} />
+                <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               </Routes>
             </div>
@@ -66,3 +72,4 @@ function App() {
 }
 
 export default App;
+
