@@ -1,32 +1,27 @@
 import { useState, useRef, useCallback } from 'react';
 
-// Deterministic pseudo-random generator to satisfy react-hooks/purity rules
-const pseudoRandom = (seed) => {
-  const x = Math.sin(seed) * 10000;
-  return x - Math.floor(x);
-};
-
-// Subtle sparkling stadium lights under the night sky
-const COURT_SPARKS = Array.from({ length: 30 }).map((_, i) => {
-  const top = `${pseudoRandom(i * 1.5) * 65}%`;
-  const left = `${pseudoRandom(i * 3.7) * 100}%`;
-  const size = `${pseudoRandom(i * 7.9) * 3 + 2}px`;
-  const delay = `${pseudoRandom(i * 11.2) * 4}s`;
-  const duration = `${pseudoRandom(i * 15.4) * 3 + 2}s`;
-  return { id: i, top, left, size, delay, duration };
-});
-
 const TennisBallIcon = () => (
-  <svg viewBox="0 0 50 50" style={{ width: '100%', height: '100%' }} fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Shadow */}
-    <circle cx="26" cy="26" r="22" fill="rgba(0, 0, 0, 0.4)" filter="blur(2px)" />
-    {/* Ball body */}
-    <circle cx="25" cy="25" r="22" fill="var(--secondary)" />
-    {/* Seams (curved white paths matching real tennis ball pattern) */}
-    <path d="M 12 12 A 17.5 17.5 0 0 0 38 38" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
-    <path d="M 12 38 A 17.5 17.5 0 0 1 38 12" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
-    {/* Inner shine */}
-    <circle cx="25" cy="25" r="22" fill="rgba(255, 255, 255, 0.1)" />
+  <svg viewBox="0 0 50 50" style={{ width: '100%', height: '100%' }} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      {/* Realistic 3D Sphere shading for the tennis ball */}
+      <radialGradient id="ball3D" cx="35%" cy="35%" r="65%">
+        <stop offset="0%" stopColor="#f3ff8a" />
+        <stop offset="45%" stopColor="#ccff00" />
+        <stop offset="80%" stopColor="#a3cc00" />
+        <stop offset="100%" stopColor="#6b8700" />
+      </radialGradient>
+      {/* Drop shadow filter for the ball itself */}
+      <filter id="ballShadow" x="-20%" y="-20%" width="150%" height="150%">
+        <feDropShadow dx="1" dy="4" stdDeviation="3" floodColor="#000000" floodOpacity="0.55" />
+      </filter>
+    </defs>
+    {/* Ball body with 3D gradient and shadow */}
+    <circle cx="25" cy="25" r="22" fill="url(#ball3D)" filter="url(#ballShadow)" />
+    {/* Seams */}
+    <path d="M 12 12 A 17.5 17.5 0 0 0 38 38" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" opacity="0.95" />
+    <path d="M 12 38 A 17.5 17.5 0 0 1 38 12" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" opacity="0.95" />
+    {/* Felt fuzz texture overlay */}
+    <circle cx="25" cy="25" r="22" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.8" strokeDasharray="1,2" />
   </svg>
 );
 
@@ -329,43 +324,23 @@ export default function TennisCourtBackground() {
 
   return (
     <>
-      {/* Background Starry & Tennis Court Layer (z-index: 0) */}
+      {/* Background Tennis Court Layer (z-index: 0) */}
       <div className="tennis-bg-container">
-        {/* Twinkling Stadium Glare Sparks */}
-        {COURT_SPARKS.map((spark) => (
-          <div
-            key={spark.id}
-            className="court-spark"
-            style={{
-              top: spark.top,
-              left: spark.left,
-              width: spark.size,
-              height: spark.size,
-              animationDelay: spark.delay,
-              animationDuration: spark.duration,
-            }}
-          />
-        ))}
-
-        {/* Stadium Lights Silhouette Layer */}
-        <div className="stadium-lights-left" />
-        <div className="stadium-lights-right" />
-
         {/* Tennis Court SVG at the bottom */}
         <div className="tennis-court-wrapper">
-          <svg viewBox="0 0 1000 400" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }}>
+          <svg viewBox="0 0 1000 600" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }}>
             <defs>
-              {/* Grand Slam Navy Blue Court Gradients */}
+              {/* Clay Orange Court Gradients */}
               <linearGradient id="outerCourtGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#0a0f1d" />
-                <stop offset="100%" stopColor="#060912" />
+                <stop offset="0%" stopColor="#a63e23" />
+                <stop offset="100%" stopColor="#7c2e17" />
               </linearGradient>
               <linearGradient id="innerCourtGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#1e3a8a" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#0f172a" stopOpacity="0.9" />
+                <stop offset="0%" stopColor="#e06a4b" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#ac4327" stopOpacity="0.95" />
               </linearGradient>
               <linearGradient id="targetGlowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="var(--secondary)" stopOpacity="0.4" />
+                <stop offset="0%" stopColor="var(--secondary)" stopOpacity="0.45" />
                 <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
               </linearGradient>
               <filter id="targetGlow">
@@ -385,15 +360,15 @@ export default function TennisCourtBackground() {
             </defs>
 
             {/* Glowing target field */}
-            <circle cx="500" cy="200" r="180" fill="url(#targetGlowGrad)" />
+            <circle cx="500" cy="285" r="180" fill="url(#targetGlowGrad)" />
 
             {/* Tennis Court Perspective Drawing */}
-            {/* Outer Alley/Sideline Polygon */}
+            {/* Outer Alley/Sideline Polygon (Doubles boundaries) */}
             <polygon
-              points="150,400 350,150 650,150 850,400"
+              points="50,580 350,120 650,120 950,580"
               fill="url(#innerCourtGrad)"
               stroke="#ffffff"
-              strokeWidth="2.5"
+              strokeWidth="3.5"
               filter="url(#lineGlow)"
               style={{ cursor: 'pointer', pointerEvents: 'auto' }}
               onClick={handleCourtClick}
@@ -401,59 +376,67 @@ export default function TennisCourtBackground() {
 
             {/* Inner Singles Court Lines */}
             <polygon
-              points="220,400 390,150 610,150 780,400"
+              points="150,580 390,120 610,120 850,580"
               fill="none"
-              stroke="rgba(255, 255, 255, 0.7)"
-              strokeWidth="1.5"
+              stroke="rgba(255, 255, 255, 0.85)"
+              strokeWidth="2.2"
               style={{ pointerEvents: 'none' }}
             />
 
             {/* Center Service Line */}
             <line
-              x1="500" y1="150" x2="500" y2="400"
-              stroke="rgba(255, 255, 255, 0.6)"
-              strokeWidth="1.5"
+              x1="500" y1="185" x2="500" y2="430"
+              stroke="rgba(255, 255, 255, 0.8)"
+              strokeWidth="2"
               style={{ pointerEvents: 'none' }}
             />
 
-            {/* Service boxes crossline */}
+            {/* Far Service Line */}
             <line
-              x1="262.5" y1="275" x2="737.5" y2="275"
-              stroke="rgba(255, 255, 255, 0.6)"
-              strokeWidth="1.5"
+              x1="356" y1="185" x2="644" y2="185"
+              stroke="rgba(255, 255, 255, 0.8)"
+              strokeWidth="2"
+              style={{ pointerEvents: 'none' }}
+            />
+
+            {/* Near Service Line */}
+            <line
+              x1="228" y1="430" x2="772" y2="430"
+              stroke="rgba(255, 255, 255, 0.8)"
+              strokeWidth="2"
               style={{ pointerEvents: 'none' }}
             />
 
             {/* Solid base */}
-            <rect x="-50" y="398" width="1100" height="10" fill="#060912" />
+            <rect x="-50" y="578" width="1100" height="30" fill="#3c140a" />
 
-            {/* Tennis Net drawn as a polygon across the center (at y = 200) */}
+            {/* Tennis Net drawn as a polygon across the center (at y = 280) */}
             {/* Net Posts */}
-            <line x1="300" y1="230" x2="300" y2="185" stroke="#94a3b8" strokeWidth="6" />
-            <line x1="700" y1="230" x2="700" y2="185" stroke="#94a3b8" strokeWidth="6" />
+            <line x1="230" y1="330" x2="230" y2="265" stroke="#94a3b8" strokeWidth="8" />
+            <line x1="770" y1="330" x2="770" y2="265" stroke="#94a3b8" strokeWidth="8" />
             
             {/* Net body (grid patterned mesh) */}
             <polygon
-              points="300,190 700,190 700,230 300,230"
-              fill="rgba(15, 23, 42, 0.85)"
-              stroke="#64748b"
+              points="230,270 770,270 770,320 230,320"
+              fill="rgba(24, 15, 10, 0.9)"
+              stroke="#5c2005"
               strokeWidth="1"
             />
             {/* White strap at the top of the net */}
-            <line x1="300" y1="190" x2="700" y2="190" stroke="#f8fafc" strokeWidth="4.5" />
+            <line x1="230" y1="270" x2="770" y2="270" stroke="#ffffff" strokeWidth="5" />
 
             {/* Pulse target zone on center of the court */}
             <circle
               ref={targetRef}
               cx="500"
-              cy="210"
-              r="22"
+              cy="285"
+              r="25"
               fill="var(--secondary)"
               filter="url(#targetGlow)"
               opacity="0.8"
               className="target-pulse"
             />
-            <circle cx="500" cy="210" r="8" fill="#ffffff" opacity="0.95" />
+            <circle cx="500" cy="285" r="8" fill="#ffffff" opacity="0.95" />
           </svg>
         </div>
       </div>
@@ -469,9 +452,7 @@ export default function TennisCourtBackground() {
           />
         ))}
 
-        {/* Draggable Tennis Balls with target ref and serving / smash callbacks */}
-        <DraggableTennisBall className="ball-left-rally" targetRef={targetRef} onAbsorb={handleAbsorb} onBoost={handleBoost} />
-        <DraggableTennisBall className="ball-right-rally" targetRef={targetRef} onAbsorb={handleAbsorb} onBoost={handleBoost} />
+        {/* Draggable Tennis Ball - Only one main improved interactive ball */}
         <DraggableTennisBall className="ball-center-hover" targetRef={targetRef} onAbsorb={handleAbsorb} onBoost={handleBoost} />
       </div>
 

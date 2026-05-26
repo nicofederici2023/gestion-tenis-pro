@@ -390,8 +390,8 @@ h1, h2, h3 {
   overflow: hidden;
   z-index: 0;
   pointer-events: none;
-  background-color: var(--background);
-  background-image: radial-gradient(circle at 50% 20%, rgba(2, 132, 199, 0.25) 0%, var(--background) 80%);
+  background-color: #7c2e17; /* Clay court dust orange-brown */
+  background-image: radial-gradient(circle at 50% 30%, #e06a4b 0%, #7c2e17 65%, #3c140a 100%);
 }
 
 .tennis-balls-interactive-container {
@@ -420,37 +420,12 @@ h1, h2, h3 {
   pointer-events: none;
 }
 
-.court-spark {
-  position: absolute;
-  background-color: #ffffff;
-  border-radius: 50%;
-  opacity: 0.6;
-  animation: sparkTwinkle 4s infinite ease-in-out;
-}
-
-@keyframes sparkTwinkle {
-  0%, 100% { opacity: 0.2; transform: scale(0.8); }
-  50% { opacity: 0.8; transform: scale(1.4); }
-}
-
-/* Stadium lights reflections */
-.stadium-lights-left, .stadium-lights-right {
-  position: absolute;
-  top: 0;
-  width: 120px;
-  height: 120px;
-  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(204,255,0,0.03) 50%, transparent 80%);
-  pointer-events: none;
-}
-.stadium-lights-left { left: 0; }
-.stadium-lights-right { right: 0; }
-
 .tennis-court-wrapper {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 250px;
+  height: 45vh; /* Much larger court filling the lower half of the screen */
   z-index: 1;
   -webkit-tap-highlight-color: transparent;
   outline: none;
@@ -463,9 +438,9 @@ h1, h2, h3 {
   user-select: none;
 }
 
-/* Pulse target */
+/* Pulse target (centered on the net) */
 .target-pulse {
-  transform-origin: 500px 210px;
+  transform-origin: 500px 285px;
   animation: targetPulse 2s infinite ease-in-out alternate;
 }
 
@@ -496,86 +471,31 @@ h1, h2, h3 {
 }
 
 .tennis-ball-interactive svg {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   pointer-events: none;
-  filter: drop-shadow(0 0 6px var(--secondary));
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s;
 }
 
 .tennis-ball-interactive.dragging svg {
-  transform: scale(1.35) rotate(45deg);
-  filter: drop-shadow(0 0 12px var(--secondary)) drop-shadow(0 0 20px var(--primary));
-}
-
-/* Ball rally animations */
-.ball-left-rally {
-  animation: ballRallyLeft 14s infinite linear;
-}
-
-@keyframes ballRallyLeft {
-  0% {
-    left: calc(110% - 30px);
-    top: 10%;
-    transform: scale(1) rotate(-15deg);
-    opacity: 0;
-  }
-  5% { opacity: 1; }
-  65% {
-    left: calc(55% - 30px);
-    top: 48%;
-    transform: scale(0.7) rotate(-45deg);
-    opacity: 0.9;
-  }
-  80%, 100% {
-    left: calc(50% - 30px);
-    top: calc(100% - 190px);
-    transform: scale(0) rotate(-90deg);
-    opacity: 0;
-  }
-}
-
-.ball-right-rally {
-  animation: ballRallyRight 16s infinite linear;
-  animation-delay: 6s;
-  opacity: 0;
-}
-
-@keyframes ballRallyRight {
-  0%, 10% {
-    left: calc(50% - 30px);
-    top: calc(100% - 190px);
-    transform: scale(0) rotate(90deg);
-    opacity: 0;
-  }
-  15% { opacity: 1; }
-  75% {
-    left: calc(20% - 30px);
-    top: 30%;
-    transform: scale(0.85) rotate(45deg);
-    opacity: 0.9;
-  }
-  90%, 100% {
-    left: -60px;
-    top: 15%;
-    transform: scale(1.1) rotate(15deg);
-    opacity: 0;
-  }
+  transform: scale(1.3) rotate(45deg);
+  filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 12px var(--secondary));
 }
 
 .ball-center-hover {
-  animation: ballHoverCenter 18s infinite ease-in-out;
+  animation: ballHoverCenter 6s infinite ease-in-out;
   left: calc(50% - 30px);
-  top: calc(100% - 245px); /* Just above net */
+  top: 72%; /* Placed comfortably on the user's side of the clay court */
 }
 
 .ball-center-hover svg {
-  filter: drop-shadow(0 0 8px var(--primary));
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
 }
 
 @keyframes ballHoverCenter {
-  0%, 100% { transform: translate(0, 0) scale(0.9); }
-  50% { transform: translate(30px, -15px) scale(1.15) rotate(90deg); }
+  0%, 100% { transform: translateY(0) scale(0.95); }
+  50% { transform: translateY(-12px) scale(1.03) rotate(15deg); }
 }
 
 /* High-velocity trail particles */
