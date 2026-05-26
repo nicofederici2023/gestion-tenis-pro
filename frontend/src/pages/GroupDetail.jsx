@@ -23,6 +23,7 @@ export default function GroupDetail() {
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [expDesc, setExpDesc] = useState('');
   const [expAmount, setExpAmount] = useState('');
+  const [expType, setExpType] = useState('expense');
   const [selectedSplitMembers, setSelectedSplitMembers] = useState([]);
 
   // Modal de editar gasto
@@ -30,6 +31,7 @@ export default function GroupDetail() {
   const [editingExpense, setEditingExpense] = useState(null);
   const [editDesc, setEditDesc] = useState('');
   const [editAmount, setEditAmount] = useState('');
+  const [editType, setEditType] = useState('expense');
   const [editSelectedSplitMembers, setEditSelectedSplitMembers] = useState([]);
 
   // Confirmar eliminación de gasto
@@ -113,6 +115,7 @@ export default function GroupDetail() {
 
   const openExpenseModal = () => {
     setSelectedSplitMembers(members.map(m => m.id));
+    setExpType('expense');
     setReceiptBase64('');
     setReceiptMimeType('');
     setReceiptPreviewUrl('');
@@ -142,6 +145,7 @@ export default function GroupDetail() {
     
     setEditDesc(desc);
     setEditAmount((expense.amount_cents / 100).toString());
+    setEditType(expense.type || 'expense');
     setEditReceiptBase64('');
     setEditReceiptMimeType('');
     setEditReceiptPreviewUrl(existingReceiptUrl);
@@ -203,7 +207,8 @@ export default function GroupDetail() {
           currency: 'ARS',
           split_among: selectedSplitMembers,
           receipt_base64: receiptBase64 || undefined,
-          receipt_mime_type: receiptMimeType || undefined
+          receipt_mime_type: receiptMimeType || undefined,
+          type: expType
         })
       });
 
@@ -242,7 +247,8 @@ export default function GroupDetail() {
           currency: 'ARS',
           split_among: editSelectedSplitMembers,
           receipt_base64: editReceiptBase64 ? editReceiptBase64 : (editReceiptRemoved ? null : undefined),
-          receipt_mime_type: editReceiptMimeType || undefined
+          receipt_mime_type: editReceiptMimeType || undefined,
+          type: editType
         })
       });
 
@@ -427,103 +433,122 @@ export default function GroupDetail() {
       <div className="content-area">
         {activeTab === 'expenses' && (
           <div>
-            <button className="btn btn-primary mb-4" onClick={openExpenseModal}>
-              <Plus size={18} /> Añadir Gasto
-            </button>
-            <div className="flex flex-col gap-2">
-              {expenses.length === 0 ? <p className="text-muted text-center py-4">No hay gastos aún.</p> : null}
-              {expenses.map(exp => {
-                const isSettlement = exp.description.startsWith('Liquidación:');
-                const canModify = exp.paid_by_id === user.id;
+            <div className="flex gap-2 mb-4 print-hide">
+              <button className="btn btn-primary" onClick={openExpenseModal} style={{ flex: 2 }}>
+                <Plus size={18} /> Añadir Gasto / Ingreso
+              </button>
+              <button className="btn btn-secondary" onClick={() => window.print()} style={{ flex: 1 }}>
+                Exportar PDF
+              </button>
+            </div>
+            
+            {expenses.length === 0 ? (
+              <p className="text-muted text-center py-4">No hay movimientos aún.</p>
+            ) : (
+              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                {expenses.map((exp, idx) => {
+                  const isSettlement = exp.description.startsWith('Liquidación:');
+                  const canModify = exp.paid_by_id === user.id;
 
-                if (isSettlement) {
-                  return (
-                    <div key={exp.id} className="card p-4 mb-0 flex justify-between items-center" style={{ borderLeft: '4px solid var(--secondary)', background: 'var(--secondary-light)' }}>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                          <ArrowRightLeft size={18} />
+                  if (isSettlement) {
+                    return (
+                      <div key={exp.id} className="expense-list-item p-4 flex justify-between items-center" style={{ borderLeft: '4px solid var(--secondary)', background: 'var(--secondary-light)' }}>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center print-hide">
+                            <ArrowRightLeft size={18} />
+                          </div>
+                          <div>
+                            <h3 className="text-base font-semibold" style={{ color: 'var(--secondary)' }}>{exp.description}</h3>
+                            <p className="text-xs text-muted">Pago registrado el {new Date(exp.created_at).toLocaleDateString()}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="text-base font-semibold text-emerald-800" style={{ color: 'var(--secondary)' }}>{exp.description}</h3>
-                          <p className="text-xs text-muted">Pago registrado el {new Date(exp.created_at).toLocaleDateString()}</p>
+                        <div className="flex items-center gap-3">
+                          <div className="font-bold" style={{ whiteSpace: 'nowrap', color: 'var(--secondary)' }}>
+                            ${(exp.amount_cents / 100).toFixed(2)}
+                          </div>
+                          {canModify && (
+                            <button
+                              onClick={() => setShowDeleteExpenseConfirm(exp)}
+                              className="context-menu-trigger print-hide"
+                              style={{ color: 'var(--danger)', padding: '4px' }}
+                              title="Eliminar liquidación"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          )}
                         </div>
                       </div>
+                    );
+                  }
+
+                  let desc = exp.description;
+                  let receiptUrl = '';
+                  if (desc.includes(' || receipt:')) {
+                    const parts = desc.split(' || receipt:');
+                    desc = parts[0];
+                    receiptUrl = parts[1];
+                  }
+
+                  const isIncome = exp.type === 'income';
+
+                  return (
+                    <div key={exp.id} className="expense-list-item p-4 flex justify-between items-center">
                       <div className="flex items-center gap-3">
-                        <div className="font-bold text-emerald-600" style={{ whiteSpace: 'nowrap', color: 'var(--secondary)' }}>
-                          ${(exp.amount_cents / 100).toFixed(2)}
+                        {receiptUrl && (
+                          <div className="shrink-0 relative cursor-pointer print-hide" onClick={() => setViewingReceiptUrl(receiptUrl)} title="Tocar para ampliar">
+                             <img 
+                               src={receiptUrl} 
+                               alt="Comprobante" 
+                               className="w-12 h-12 rounded-lg object-cover border shadow-sm" 
+                             />
+                             <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 border shadow-sm text-primary">
+                               <Camera size={10} />
+                             </div>
+                          </div>
+                        )}
+                        <div>
+                          <h3 className="text-base">{desc}</h3>
+                          <p className="text-xs text-muted mb-1">
+                            {isIncome ? 'Cobró' : 'Pagó'} {exp.profiles?.full_name || 'Miembro'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <div 
+                          className="font-bold" 
+                          style={{ 
+                            whiteSpace: 'nowrap',
+                            color: isIncome ? 'var(--secondary)' : 'var(--text-main)' 
+                          }}
+                        >
+                          {isIncome ? '+' : '-'} ${(exp.amount_cents / 100).toFixed(2)}
                         </div>
                         {canModify && (
-                          <button
-                            onClick={() => setShowDeleteExpenseConfirm(exp)}
-                            className="context-menu-trigger"
-                            style={{ color: 'var(--danger)', padding: '4px' }}
-                            title="Eliminar liquidación"
-                          >
-                            <Trash2 size={18} />
-                          </button>
+                          <div className="flex gap-2 print-hide">
+                            <button
+                              onClick={() => openEditExpenseModal(exp)}
+                              className="context-menu-trigger"
+                              title="Editar"
+                              style={{ padding: '4px' }}
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <button
+                              onClick={() => setShowDeleteExpenseConfirm(exp)}
+                              className="context-menu-trigger"
+                              style={{ color: 'var(--danger)', padding: '4px' }}
+                              title="Eliminar"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
                   );
-                }
-
-                let desc = exp.description;
-                let receiptUrl = '';
-                if (desc.includes(' || receipt:')) {
-                  const parts = desc.split(' || receipt:');
-                  desc = parts[0];
-                  receiptUrl = parts[1];
-                }
-
-                return (
-                  <div key={exp.id} className="card p-4 mb-0 flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      {receiptUrl && (
-                        <div className="shrink-0 relative cursor-pointer" onClick={() => setViewingReceiptUrl(receiptUrl)} title="Tocar para ampliar">
-                           <img 
-                             src={receiptUrl} 
-                             alt="Comprobante" 
-                             className="w-12 h-12 rounded-lg object-cover border shadow-sm" 
-                           />
-                           <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 border shadow-sm text-primary">
-                             <Camera size={10} />
-                           </div>
-                        </div>
-                      )}
-                      <div>
-                        <h3 className="text-base">{desc}</h3>
-                        <p className="text-xs text-muted mb-1">Pagó {exp.profiles?.full_name || 'Miembro'}</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <div className="font-bold" style={{ whiteSpace: 'nowrap' }}>
-                        ${(exp.amount_cents / 100).toFixed(2)}
-                      </div>
-                      {canModify && (
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => openEditExpenseModal(exp)}
-                            className="context-menu-trigger"
-                            title="Editar"
-                            style={{ padding: '4px' }}
-                          >
-                            <Edit2 size={16} />
-                          </button>
-                          <button
-                            onClick={() => setShowDeleteExpenseConfirm(exp)}
-                            className="context-menu-trigger"
-                            style={{ color: 'var(--danger)', padding: '4px' }}
-                            title="Eliminar"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -664,8 +689,20 @@ export default function GroupDetail() {
       {showExpenseModal && (
         <div className="modal-overlay">
           <div className="card w-full animate-fade-in" style={{ maxWidth: '400px', maxHeight: 'calc(100vh - 8rem)', overflowY: 'auto' }}>
-            <h2 className="mb-4">Registrar Gasto</h2>
+            <h2 className="mb-4">Registrar {expType === 'income' ? 'Ingreso' : 'Gasto'}</h2>
             <form onSubmit={handleAddExpense}>
+              <div className="input-group">
+                <label>Tipo de Movimiento</label>
+                <select 
+                  className="input" 
+                  value={expType} 
+                  onChange={e => setExpType(e.target.value)}
+                  style={{ background: 'var(--surface)', color: 'var(--text-main)', cursor: 'pointer' }}
+                >
+                  <option value="expense">Gasto (Pago de canchas, trofeos, pelotas, etc.)</option>
+                  <option value="income">Ingreso (Publicidad, inscripciones de jugadores, etc.)</option>
+                </select>
+              </div>
               <div className="input-group">
                 <label>Descripción</label>
                 <input type="text" className="input" value={expDesc} onChange={e => setExpDesc(e.target.value)} required />
@@ -730,7 +767,7 @@ export default function GroupDetail() {
               </div>
 
               <p className="text-xs text-muted mb-4 text-center">
-                El gasto se dividirá en partes iguales entre los {selectedSplitMembers.length} miembros seleccionados.
+                El {expType === 'income' ? 'ingreso' : 'gasto'} se dividirá en partes iguales entre los {selectedSplitMembers.length} miembros seleccionados.
               </p>
               <div className="flex gap-2">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowExpenseModal(false)}>Cancelar</button>
@@ -745,8 +782,20 @@ export default function GroupDetail() {
       {showEditModal && (
         <div className="modal-overlay">
           <div className="card w-full animate-fade-in" style={{ maxWidth: '400px', maxHeight: 'calc(100vh - 8rem)', overflowY: 'auto' }}>
-            <h2 className="mb-4">Editar Gasto</h2>
+            <h2 className="mb-4">Editar {editType === 'income' ? 'Ingreso' : 'Gasto'}</h2>
             <form onSubmit={handleEditExpense}>
+              <div className="input-group">
+                <label>Tipo de Movimiento</label>
+                <select 
+                  className="input" 
+                  value={editType} 
+                  onChange={e => setEditType(e.target.value)}
+                  style={{ background: 'var(--surface)', color: 'var(--text-main)', cursor: 'pointer' }}
+                >
+                  <option value="expense">Gasto (Pago de canchas, trofeos, pelotas, etc.)</option>
+                  <option value="income">Ingreso (Publicidad, inscripciones de jugadores, etc.)</option>
+                </select>
+              </div>
               <div className="input-group">
                 <label>Descripción</label>
                 <input type="text" className="input" value={editDesc} onChange={e => setEditDesc(e.target.value)} required />
@@ -811,7 +860,7 @@ export default function GroupDetail() {
               </div>
 
               <p className="text-xs text-muted mb-4 text-center">
-                El gasto se dividirá en partes iguales entre los {editSelectedSplitMembers.length} miembros seleccionados.
+                El {editType === 'income' ? 'ingreso' : 'gasto'} se dividirá en partes iguales entre los {editSelectedSplitMembers.length} miembros seleccionados.
               </p>
               <div className="flex gap-2">
                 <button type="button" className="btn btn-secondary" onClick={() => { setShowEditModal(false); setEditingExpense(null); }}>Cancelar</button>

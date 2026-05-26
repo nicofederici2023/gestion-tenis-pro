@@ -38,7 +38,7 @@ const uploadReceiptToSupabase = async (base64Data, mimeType, expenseId) => {
 const createExpense = async (req, res) => {
   try {
     const { groupId } = req.params;
-    const { description, amount_cents, currency, date, split_among, receipt_base64, receipt_mime_type } = req.body;
+    const { description, amount_cents, currency, date, split_among, receipt_base64, receipt_mime_type, type } = req.body;
 
     // 1. Insert expense
     const { data: expense, error: expenseError } = await supabase
@@ -49,7 +49,8 @@ const createExpense = async (req, res) => {
         description,
         amount_cents,
         currency: currency || 'ARS',
-        date: date || new Date().toISOString().split('T')[0]
+        date: date || new Date().toISOString().split('T')[0],
+        type: type || 'expense'
       }])
       .select()
       .single();
@@ -146,7 +147,7 @@ const getExpenseById = async (req, res) => {
 const updateExpense = async (req, res) => {
   try {
     const { id } = req.params;
-    const { description, amount_cents, currency, date, split_among, receipt_base64, receipt_mime_type } = req.body;
+    const { description, amount_cents, currency, date, split_among, receipt_base64, receipt_mime_type, type } = req.body;
 
     // 1. Get old expense to verify ownership and get group_id & description
     const { data: oldExpense, error: fetchError } = await supabase
@@ -189,7 +190,8 @@ const updateExpense = async (req, res) => {
         description: finalDescription, 
         amount_cents, 
         currency: currency || 'ARS', 
-        date: date || new Date().toISOString().split('T')[0] 
+        date: date || new Date().toISOString().split('T')[0],
+        type: type || 'expense'
       })
       .eq('id', id)
       .select()

@@ -25,6 +25,7 @@ const recalculateGroupBalances = async (groupId) => {
         paid_by_id,
         amount_cents,
         description,
+        type,
         expense_shares (profile_id, share_type)
       `)
       .eq('group_id', groupId);
@@ -47,15 +48,19 @@ const recalculateGroupBalances = async (groupId) => {
           }
         } else {
           const payerId = exp.paid_by_id;
+          const isIncome = exp.type === 'income';
+          // Para un ingreso, negamos el monto en los cálculos de deuda
+          const amount = isIncome ? -exp.amount_cents : exp.amount_cents;
+          
           // Participantes del gasto (quienes comparten)
           const shares = exp.expense_shares.filter(s => s.share_type !== 'settlement_recipient');
           
-          // Al pagador se le acredita la totalidad
-          netBalances[payerId] = (netBalances[payerId] || 0) + exp.amount_cents;
+          // Al pagador se le acredita la totalidad (o se le debita si es un ingreso)
+          netBalances[payerId] = (netBalances[payerId] || 0) + amount;
           
-          // A cada participante se le debita su parte
+          // A cada participante se le debita su parte (o se le acredita si es un ingreso)
           if (shares.length > 0) {
-            const shareAmount = Math.round(exp.amount_cents / shares.length);
+            const shareAmount = Math.round(amount / shares.length);
             shares.forEach(s => {
               netBalances[s.profile_id] = (netBalances[s.profile_id] || 0) - shareAmount;
             });

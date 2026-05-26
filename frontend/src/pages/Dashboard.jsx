@@ -127,7 +127,7 @@ export default function Dashboard() {
   return (
     <div>
       <div className="header mb-6" style={{ margin: '-1.5rem -1.5rem 1.5rem -1.5rem' }}>
-        <h1 className="text-xl">Mis Torneos y Gastos</h1>
+        <h1 className="text-xl">Gastos</h1>
         <button 
           onClick={() => setShowModal(true)} 
           className="btn btn-primary" 

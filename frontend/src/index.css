@@ -877,14 +877,15 @@ h1, h2, h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0.5rem;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 0.6rem 0.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   transition: background-color 0.2s;
 }
+.expense-report-item:last-child {
+  border-bottom: none;
+}
 .expense-report-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.02);
 }
 .expense-description {
   color: var(--text-main);
@@ -906,5 +907,84 @@ h1, h2, h3 {
 @keyframes loadingShimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+/* Detailed List Item for Group Expenses */
+.expense-list-item {
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s;
+}
+.expense-list-item:last-child {
+  border-bottom: none;
+}
+.expense-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.expense-date {
+  white-space: nowrap !important;
+}
+
+/* PDF Print styles */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt;
+  }
+  
+  .app-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  
+  .content {
+    padding: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  
+  .card {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    margin-bottom: 1.5rem !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  h1, h2, h3, p, span, div {
+    color: #000000 !important;
+  }
+  
+  .text-muted {
+    color: #475569 !important;
+  }
+  
+  .text-success {
+    color: #16a34a !important; /* Green for success/income on print */
+  }
+
+  .expense-report-item {
+    border-bottom: 1px solid #cbd5e1 !important;
+  }
+  
+  .expense-list-item {
+    border-bottom: 1px solid #cbd5e1 !important;
+  }
+
+  /* Hide PWA, backgrounds, floating items, buttons and menus */
+  .bottom-nav,
+  .print-hide,
+  .btn,
+  .modal-overlay,
+  .tennis-court-bg,
+  .draggable-ball,
+  .context-menu-trigger,
+  button {
+    display: none !important;
+  }
 }
 

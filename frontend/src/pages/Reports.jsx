@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../context/AuthContext';
-import { BarChart3, Trophy, Calendar, User, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
+import { BarChart3, Trophy, Calendar, User, ChevronDown, ChevronUp, AlertCircle, Printer } from 'lucide-react';
 
 export default function Reports() {
   const { user } = useAuth();
@@ -85,21 +85,48 @@ export default function Reports() {
     return desc.split(' || receipt:')[0];
   };
 
-  // Compute total expenses by group
+  // Short format for date: DD/MM/YY
+  const formatDateShort = (dateStr) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    const [year, month, day] = parts;
+    return `${day}/${month}/${year.substring(2)}`;
+  };
+
+  // Compute total net expenses by group (expenses - income)
   const getGroupTotal = (groupId) => {
     return expenses
       .filter(e => e.group_id === groupId)
-      .reduce((sum, e) => sum + e.amount_cents, 0);
+      .reduce((sum, e) => {
+        const isIncome = e.type === 'income';
+        const amount = isIncome ? -e.amount_cents : e.amount_cents;
+        return sum + amount;
+      }, 0);
   };
 
-  // Calculate global summary totals by currency
+  // Calculate global summary net totals by currency (expenses - income)
   const getGlobalTotals = () => {
     const totals = {};
     expenses.forEach(e => {
       const currency = e.currency || 'ARS';
-      totals[currency] = (totals[currency] || 0) + e.amount_cents;
+      const isIncome = e.type === 'income';
+      const amount = isIncome ? -e.amount_cents : e.amount_cents;
+      totals[currency] = (totals[currency] || 0) + amount;
     });
     return totals;
+  };
+
+  // Expand all groups and trigger window print
+  const handleExportPDF = () => {
+    const allExpanded = {};
+    groups.forEach(g => {
+      allExpanded[g.id] = true;
+    });
+    setExpandedGroups(allExpanded);
+    setTimeout(() => {
+      window.print();
+    }, 250);
   };
 
   const globalTotals = getGlobalTotals();
@@ -123,9 +150,20 @@ export default function Reports() {
   return (
     <div className="reports-container">
       <div className="header-compact mb-6">
-        <div className="flex items-center gap-2">
-          <BarChart3 size={28} className="text-success" />
-          <h1>Reportes de Gastos</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <BarChart3 size={28} className="text-success" />
+            <h1>Reportes de Gastos</h1>
+          </div>
+          {groups.length > 0 && (
+            <button 
+              onClick={handleExportPDF} 
+              className="btn btn-secondary print-hide flex items-center gap-1"
+              style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+            >
+              <Printer size={16} /> Exportar PDF
+            </button>
+          )}
         </div>
         <p className="text-sm text-muted">Resumen financiero consolidado de tus torneos de tenis.</p>
       </div>
@@ -145,7 +183,7 @@ export default function Reports() {
               <span className="stat-value">{groups.length}</span>
             </div>
             <div className="card stat-card">
-              <span className="stat-label">Gasto Consolidado</span>
+              <span className="stat-label">Balance Neto Total</span>
               <div className="flex flex-col">
                 {Object.keys(globalTotals).length === 0 ? (
                   <span className="stat-value">$ 0,00</span>
@@ -186,48 +224,54 @@ export default function Reports() {
 
                     <div className="text-right flex items-center gap-4">
                       <div>
-                        <p className="text-xs text-muted uppercase tracking-wider font-semibold">Total Gastado</p>
+                        <p className="text-xs text-muted uppercase tracking-wider font-semibold">Total Gastado (Neto)</p>
                         <p className="text-sm font-bold text-success">
                           {formatCurrency(totalCents, group.currency || 'ARS')}
                         </p>
                       </div>
-                      {isExpanded ? <ChevronUp size={20} className="text-muted" /> : <ChevronDown size={20} className="text-muted" />}
+                      {isExpanded ? <ChevronUp size={20} className="text-muted print-hide" /> : <ChevronDown size={20} className="text-muted print-hide" />}
                     </div>
                   </div>
 
                   {/* Detalle de Gastos */}
                   {isExpanded && (
-                    <div className="group-report-details mt-4 pt-4 border-t">
+                    <div className="group-report-details mt-2 pt-2 border-t">
                       {groupExpenses.length === 0 ? (
                         <p className="text-xs text-muted text-center py-4">
-                          No hay gastos registrados en este torneo.
+                          No hay movimientos registrados en este torneo.
                         </p>
                       ) : (
-                        <div className="flex flex-col gap-2">
-                          {groupExpenses.map(exp => (
-                            <div key={exp.id} className="expense-report-item">
-                              <div className="flex-1">
-                                <p className="expense-description font-medium text-sm">
-                                  {cleanDescription(exp.description)}
-                                </p>
-                                <div className="flex items-center gap-4 text-xs text-muted mt-1">
-                                  <span className="flex items-center gap-1">
-                                    <Calendar size={12} />
-                                    {exp.date}
-                                  </span>
-                                  <span className="flex items-center gap-1">
-                                    <User size={12} />
-                                    Pagó {exp.profiles?.full_name || 'Miembro'}
+                        <div className="flex flex-col">
+                          {groupExpenses.map(exp => {
+                            const isIncome = exp.type === 'income';
+                            return (
+                              <div key={exp.id} className="expense-report-item">
+                                <div className="flex-1">
+                                  <p className="expense-description font-medium text-sm">
+                                    {cleanDescription(exp.description)}
+                                  </p>
+                                  <div className="flex items-center gap-4 text-xs text-muted mt-1">
+                                    <span className="flex items-center gap-1 expense-date">
+                                      <Calendar size={12} />
+                                      {formatDateShort(exp.date)}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                      <User size={12} />
+                                      {isIncome ? 'Cobró' : 'Pagó'} {exp.profiles?.full_name || 'Miembro'}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <span 
+                                    className="font-semibold text-sm"
+                                    style={{ color: isIncome ? 'var(--secondary)' : 'var(--text-main)' }}
+                                  >
+                                    {isIncome ? '+' : '-'} {formatCurrency(exp.amount_cents, exp.currency || 'ARS')}
                                   </span>
                                 </div>
                               </div>
-                              <div className="text-right">
-                                <span className="font-semibold text-sm">
-                                  {formatCurrency(exp.amount_cents, exp.currency || 'ARS')}
-                                </span>
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       )}
                     </div>
