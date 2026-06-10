@@ -9,7 +9,10 @@ const {
   getGroupMembers,
   addMemberByEmail,
   addLocalMember,
-  linkLocalMember
+  addLocalMember,
+  linkLocalMember,
+  deleteMember,
+  editLocalMember
 } = require('../controllers/groups.controller');
 const { requireAuth } = require('../middlewares/auth.middleware');
 
@@ -30,6 +33,8 @@ router.get('/:id/members', getGroupMembers);
 router.post('/:id/members', addMemberByEmail);
 router.post('/:id/members/local', addLocalMember);
 router.post('/:id/members/:memberId/link', linkLocalMember);
+router.delete('/:id/members/:memberId', deleteMember);
+router.put('/:id/members/:memberId/local', editLocalMember);
 
 // Sub-rutas asociadas a grupos
 router.use('/:groupId/expenses', expensesRoutes);

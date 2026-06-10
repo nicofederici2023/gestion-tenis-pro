@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../config/supabase';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Plus, MoreVertical, Edit2, Trash2 } from 'lucide-react';
+import NotificationPrompt from '../components/NotificationPrompt';
+import { Plus, MoreVertical, Edit2, Trash2, Download } from 'lucide-react';
+import { usePwa } from '../context/PwaContext';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { isInstallable, installApp } = usePwa();
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -128,13 +131,25 @@ export default function Dashboard() {
     <div>
       <div className="header mb-6" style={{ margin: '-1.5rem -1.5rem 1.5rem -1.5rem' }}>
         <h1 className="text-xl">Gastos</h1>
-        <button 
-          onClick={() => setShowModal(true)} 
-          className="btn btn-primary" 
-          style={{ width: 'auto', padding: '0.5rem 1.25rem' }}
-        >
-          <Plus size={18} className="mr-1" /> Nuevo
-        </button>
+        <div className="flex gap-2">
+          {isInstallable && (
+            <button 
+              onClick={installApp} 
+              className="btn btn-secondary flex items-center justify-center" 
+              style={{ width: 'auto', padding: '0.5rem', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', border: 'none' }}
+              title="Instalar App"
+            >
+              <Download size={20} />
+            </button>
+          )}
+          <button 
+            onClick={() => setShowModal(true)} 
+            className="btn btn-primary" 
+            style={{ width: 'auto', padding: '0.5rem 1.25rem' }}
+          >
+            <Plus size={18} className="mr-1" /> Nuevo
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -210,6 +225,8 @@ export default function Dashboard() {
           })}
         </div>
       )}
+
+      <NotificationPrompt />
 
       {/* Modal Crear Gasto */}
       {showModal && (

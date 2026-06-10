@@ -1,1 +1,7 @@
 use la cuenta nicofederici2023
+
+clave base de datos supabase Tenis.2026.CAEC
+
+https://zgykjuejkbradfdkjoap.supabase.co
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpneWtqdWVqa2JyYWRmZGtqb2FwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NzAzNjEsImV4cCI6MjA5NTM0NjM2MX0.b65fgnOc-JAX6b4MLsqPYg6FjaEN6Xswn4_Q-3X357c

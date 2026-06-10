@@ -1,5 +1,6 @@
 const { supabase } = require('../config/supabase');
 const { recalculateGroupBalances } = require('../services/balances.service');
+const { sendNotificationToGroup } = require('./notifications.controller');
 
 const uploadReceiptToSupabase = async (base64Data, mimeType, expenseId) => {
   try {
@@ -95,6 +96,14 @@ const createExpense = async (req, res) => {
 
     // 5. Simulate Notification
     console.log(`[NOTIFICATION] Sending email to participants of expense: ${finalDescription}`);
+    
+    // 6. Send Push Notification
+    await sendNotificationToGroup(
+      groupId,
+      req.user.id,
+      'Nuevo gasto registrado',
+      `Se registró un nuevo gasto: ${description} por $${(amount_cents / 100).toFixed(2)} ${currency}`
+    );
 
     res.status(201).json(expense);
   } catch (error) {

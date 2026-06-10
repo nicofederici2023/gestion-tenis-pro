@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, Receipt, Users, Calculator, Plus, ArrowRightLeft, Edit2, Trash2, Link2, Camera, Eye } from 'lucide-react';
+import { ArrowLeft, Receipt, Users, Calculator, Plus, ArrowRightLeft, Edit2, Trash2, Link2, Camera, Eye, Check, X } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
@@ -46,6 +46,8 @@ export default function GroupDetail() {
   const [localName, setLocalName] = useState('');
   const [localError, setLocalError] = useState('');
   const [localSuccess, setLocalSuccess] = useState('');
+  const [editingMemberId, setEditingMemberId] = useState(null);
+  const [editMemberName, setEditMemberName] = useState('');
 
   // Vinculación de miembros
   const [showLinkModal, setShowLinkModal] = useState(false);
@@ -369,6 +371,49 @@ export default function GroupDetail() {
     }
   };
 
+  const handleEditMemberSubmit = async (memberId) => {
+    try {
+      const response = await fetch(`${API_URL}/api/groups/${id}/members/${memberId}/local`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({ full_name: editMemberName })
+      });
+
+      if (!response.ok) {
+        const resData = await response.json();
+        throw new Error(resData.error || 'Error al actualizar miembro');
+      }
+      setEditingMemberId(null);
+      fetchGroupData();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleDeleteMember = async (memberId) => {
+    if (!window.confirm('¿Estás seguro de que deseas eliminar este miembro? Esto podría afectar los saldos si tiene pagos o deudas.')) return;
+    
+    try {
+      const response = await fetch(`${API_URL}/api/groups/${id}/members/${memberId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+
+      if (!response.ok) {
+        const resData = await response.json();
+        throw new Error(resData.error || 'Error al eliminar miembro');
+      }
+      fetchGroupData();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   const handleLinkLocalMember = async (e) => {
     e.preventDefault();
     setLinkError('');
@@ -653,33 +698,56 @@ export default function GroupDetail() {
             </form>
 
             <ul className="list-none">
-              {members.map(m => (
+              {members.map(m => {
+                const isCreator = group.creator_id === user.id;
+                const canModify = isCreator && m.id !== user.id;
+                const isLocal = !m.email;
+                return (
                 <li key={m.id} className="py-2 border-b border-gray-100 last:border-0 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs" style={{ backgroundColor: 'var(--primary)', color: 'white' }}>
+                    <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shrink-0" style={{ backgroundColor: 'var(--primary)', color: 'white' }}>
                       {m.full_name?.charAt(0).toUpperCase()}
                     </div>
-                    <span className="flex items-center gap-2">
-                      <span>{m.full_name} {m.id === user.id ? '(Vos)' : ''}</span>
-                      {!m.email && (
-                        <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '999px', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', fontWeight: '600' }}>
-                          Local
-                        </span>
-                      )}
-                    </span>
+                    {editingMemberId === m.id ? (
+                      <form onSubmit={(e) => { e.preventDefault(); handleEditMemberSubmit(m.id); }} className="flex gap-2">
+                        <input type="text" value={editMemberName} onChange={e => setEditMemberName(e.target.value)} className="input px-2 text-sm" style={{height:'32px'}} required />
+                        <button type="submit" className="btn btn-primary flex items-center justify-center shrink-0" style={{height:'32px', width:'32px', padding:0}}><Check size={16}/></button>
+                        <button type="button" onClick={() => setEditingMemberId(null)} className="btn btn-secondary flex items-center justify-center shrink-0" style={{height:'32px', width:'32px', padding:0}}><X size={16}/></button>
+                      </form>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <span className="truncate">{m.full_name} {m.id === user.id ? '(Vos)' : ''}</span>
+                        {isLocal && (
+                          <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '999px', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', fontWeight: '600' }}>
+                            Local
+                          </span>
+                        )}
+                      </span>
+                    )}
                   </div>
-                  {!m.email && (
-                    <button
-                      onClick={() => { setLinkingMember(m); setShowLinkModal(true); }}
-                      className="btn btn-secondary text-xs flex items-center gap-1"
-                      style={{ width: 'auto', padding: '4px 8px', fontSize: '0.75rem', border: '1px solid var(--primary)', color: 'var(--primary)', height: 'auto' }}
-                      title="Vincular con una cuenta de correo"
-                    >
-                      <Link2 size={12} /> Vincular
-                    </button>
-                  )}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {isLocal && !editingMemberId && (
+                      <button
+                        onClick={() => { setLinkingMember(m); setShowLinkModal(true); }}
+                        className="btn btn-secondary text-xs flex items-center gap-1"
+                        style={{ width: 'auto', padding: '4px 8px', fontSize: '0.75rem', border: '1px solid var(--primary)', color: 'var(--primary)', height: 'auto' }}
+                        title="Vincular con una cuenta de correo"
+                      >
+                        <Link2 size={12} /> Vincular
+                      </button>
+                    )}
+                    {canModify && !editingMemberId && (
+                       <>
+                         {isLocal && (
+                           <button onClick={() => { setEditingMemberId(m.id); setEditMemberName(m.full_name); }} className="text-muted hover:text-primary" style={{background:'none', border:'none', padding:2, cursor:'pointer'}}><Edit2 size={16} /></button>
+                         )}
+                         <button onClick={() => handleDeleteMember(m.id)} className="text-muted hover:text-danger" style={{background:'none', border:'none', padding:2, cursor:'pointer'}}><Trash2 size={16} /></button>
+                       </>
+                    )}
+                  </div>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </div>
         )}

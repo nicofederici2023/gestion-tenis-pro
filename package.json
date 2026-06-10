@@ -2,10 +2,18 @@
   "name": "gastosc",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
   }
 }

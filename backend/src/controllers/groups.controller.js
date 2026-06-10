@@ -381,6 +381,103 @@ const linkLocalMember = async (req, res) => {
   }
 };
 
+const editLocalMember = async (req, res) => {
+  try {
+    const { id: groupId, memberId } = req.params;
+    const { full_name } = req.body;
+
+    if (!full_name) {
+      return res.status(400).json({ error: 'El nombre es requerido' });
+    }
+
+    // Ensure the requester is the group creator
+    const { data: group, error: groupError } = await supabase
+      .from('groups')
+      .select('creator_id')
+      .eq('id', groupId)
+      .single();
+    
+    if (groupError || !group) throw new Error('Grupo no encontrado');
+    if (group.creator_id !== req.user.id) {
+      return res.status(403).json({ error: 'Solo el creador del grupo puede editar miembros locales' });
+    }
+
+    // We can only edit if it's a local member (email is null)
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('id', memberId)
+      .single();
+
+    if (profileError || !profile) throw new Error('Perfil no encontrado');
+    if (profile.email !== null) {
+      return res.status(400).json({ error: 'No se puede editar el nombre de un usuario registrado con correo' });
+    }
+
+    // Update name
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ full_name: full_name.trim() })
+      .eq('id', memberId);
+
+    if (updateError) throw updateError;
+
+    res.status(200).json({ message: 'Miembro local actualizado con éxito' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const deleteMember = async (req, res) => {
+  try {
+    const { id: groupId, memberId } = req.params;
+
+    // Ensure the requester is the group creator
+    const { data: group, error: groupError } = await supabase
+      .from('groups')
+      .select('creator_id')
+      .eq('id', groupId)
+      .single();
+    
+    if (groupError || !group) throw new Error('Grupo no encontrado');
+    if (group.creator_id !== req.user.id) {
+      return res.status(403).json({ error: 'Solo el creador del grupo puede eliminar miembros' });
+    }
+
+    if (memberId === group.creator_id) {
+      return res.status(400).json({ error: 'El creador del grupo no puede ser eliminado' });
+    }
+
+    // Ensure the user has no unpaid expenses or pending balances
+    // Since removing a user might break the balances, we just remove them from group_members. 
+    // Wait, if we delete the member from group_members, their expenses might still exist or cascade delete.
+    // Our DB schema: group_members has NO cascade to expenses.
+    // We can delete their membership
+    const { error: deleteMemError } = await supabase
+      .from('group_members')
+      .delete()
+      .eq('group_id', groupId)
+      .eq('profile_id', memberId);
+
+    if (deleteMemError) throw deleteMemError;
+
+    // Check if it's a local member (no email), if they are in NO other groups, we can delete the profile
+    const { data: profile } = await supabase.from('profiles').select('email').eq('id', memberId).single();
+    if (profile && profile.email === null) {
+      const { data: otherGroups } = await supabase.from('group_members').select('id').eq('profile_id', memberId);
+      if (!otherGroups || otherGroups.length === 0) {
+        await supabase.from('profiles').delete().eq('id', memberId);
+      }
+    }
+
+    await recalculateGroupBalances(groupId);
+
+    res.status(200).json({ message: 'Miembro eliminado con éxito' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createGroup,
   getGroups,
@@ -391,6 +488,8 @@ module.exports = {
   getGroupMembers,
   addMemberByEmail,
   addLocalMember,
-  linkLocalMember
+  linkLocalMember,
+  editLocalMember,
+  deleteMember
 };
 

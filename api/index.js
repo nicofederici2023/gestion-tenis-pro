@@ -6,6 +6,7 @@ require('dotenv').config({ path: './backend/.env' });
 
 const authRoutes = require('./backend/src/routes/auth.routes');
 const groupsRoutes = require('./backend/src/routes/groups.routes');
+const notificationsRoutes = require('./backend/src/routes/notifications.routes');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupsRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Root route
 app.get('/api', (req, res) => {
