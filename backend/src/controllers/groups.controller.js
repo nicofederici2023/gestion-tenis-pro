@@ -3,7 +3,7 @@ const { recalculateGroupBalances } = require('../services/balances.service');
 
 const createGroup = async (req, res) => {
   try {
-    const { name, description, currency, budget_cents } = req.body;
+    const { name, description, currency, budget_cents, group_type } = req.body;
     
     // Create group
     const { data: group, error } = await supabase
@@ -13,6 +13,7 @@ const createGroup = async (req, res) => {
         description,
         currency: currency || 'ARS',
         budget_cents,
+        group_type: group_type || 'shared',
         creator_id: req.user.id
       }])
       .select()
@@ -91,11 +92,11 @@ const getGroupById = async (req, res) => {
 const updateGroup = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, currency, budget_cents } = req.body;
+    const { name, description, currency, budget_cents, group_type } = req.body;
 
     const { data, error } = await supabase
       .from('groups')
-      .update({ name, description, currency, budget_cents })
+      .update({ name, description, currency, budget_cents, group_type: group_type || 'shared' })
       .eq('id', id)
       .eq('creator_id', req.user.id) // Only creator can update
       .select()

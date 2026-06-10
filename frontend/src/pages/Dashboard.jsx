@@ -16,11 +16,13 @@ export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDesc, setNewGroupDesc] = useState('');
+  const [newGroupType, setNewGroupType] = useState('shared');
 
   const [activeGroupMenu, setActiveGroupMenu] = useState(null);
   const [editingGroup, setEditingGroup] = useState(null);
   const [editGroupName, setEditGroupName] = useState('');
   const [editGroupDesc, setEditGroupDesc] = useState('');
+  const [editGroupType, setEditGroupType] = useState('shared');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
 
   const fetchGroups = async () => {
@@ -63,6 +65,7 @@ export default function Dashboard() {
         .insert([{
           name: newGroupName,
           description: newGroupDesc,
+          group_type: newGroupType,
           creator_id: user.id
         }])
         .select()
@@ -81,6 +84,7 @@ export default function Dashboard() {
       setShowModal(false);
       setNewGroupName('');
       setNewGroupDesc('');
+      setNewGroupType('shared');
       fetchGroups(); // reload
     } catch (error) {
       console.error('Error creating group:', error.message);
@@ -96,7 +100,8 @@ export default function Dashboard() {
         .from('groups')
         .update({
           name: editGroupName,
-          description: editGroupDesc
+          description: editGroupDesc,
+          group_type: editGroupType
         })
         .eq('id', editingGroup.id)
         .eq('creator_id', user.id);
@@ -171,8 +176,11 @@ export default function Dashboard() {
                   <div className="card" style={{ marginBottom: 0, paddingRight: '3.5rem' }}>
                     <h3>{group.name}</h3>
                     {group.description && <p className="text-sm text-muted mt-1">{group.description}</p>}
-                    <div className="mt-3 text-xs text-muted">
-                      Creado el {new Date(group.created_at).toLocaleDateString()} {isCreator && ' • Creador'}
+                    <div className="mt-3 text-xs text-muted flex items-center gap-2">
+                      <span className="truncate">Creado el {new Date(group.created_at).toLocaleDateString()} {isCreator && ' • Creador'}</span>
+                      <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '999px', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', fontWeight: '600' }}>
+                        {group.group_type === 'ledger' ? 'Solo Registro' : 'Gastos Compartidos'}
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -200,6 +208,7 @@ export default function Dashboard() {
                             setEditingGroup(group);
                             setEditGroupName(group.name);
                             setEditGroupDesc(group.description || '');
+                            setEditGroupType(group.group_type || 'shared');
                             setActiveGroupMenu(null);
                           }}
                         >
@@ -253,6 +262,18 @@ export default function Dashboard() {
                   onChange={(e) => setNewGroupDesc(e.target.value)}
                 />
               </div>
+              <div className="input-group mt-2">
+                <label>Tipo de Torneo</label>
+                <select 
+                  className="input" 
+                  value={newGroupType} 
+                  onChange={(e) => setNewGroupType(e.target.value)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <option value="shared">Gastos Compartidos (Genera deudas entre participantes)</option>
+                  <option value="ledger">Solo Registro (Libro contable sin generar deudas)</option>
+                </select>
+              </div>
               <div className="flex gap-2 mt-6">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
                 <button type="submit" className="btn btn-primary">Crear</button>
@@ -286,6 +307,18 @@ export default function Dashboard() {
                   value={editGroupDesc}
                   onChange={(e) => setEditGroupDesc(e.target.value)}
                 />
+              </div>
+              <div className="input-group mt-2">
+                <label>Tipo de Torneo</label>
+                <select 
+                  className="input" 
+                  value={editGroupType} 
+                  onChange={(e) => setEditGroupType(e.target.value)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <option value="shared">Gastos Compartidos (Genera deudas entre participantes)</option>
+                  <option value="ledger">Solo Registro (Libro contable sin generar deudas)</option>
+                </select>
               </div>
               <div className="flex gap-2 mt-6">
                 <button type="button" className="btn btn-secondary" onClick={() => setEditingGroup(null)}>Cancelar</button>

@@ -465,10 +465,12 @@ export default function GroupDetail() {
           <Receipt size={18} className="mx-auto mb-1" />
           Gastos
         </div>
-        <div className={`tab ${activeTab === 'balances' ? 'active' : ''}`} onClick={() => setActiveTab('balances')}>
-          <Calculator size={18} className="mx-auto mb-1" />
-          Saldos
-        </div>
+        {group.group_type !== 'ledger' && (
+          <div className={`tab ${activeTab === 'balances' ? 'active' : ''}`} onClick={() => setActiveTab('balances')}>
+            <Calculator size={18} className="mx-auto mb-1" />
+            Saldos
+          </div>
+        )}
         <div className={`tab ${activeTab === 'members' ? 'active' : ''}`} onClick={() => setActiveTab('members')}>
           <Users size={18} className="mx-auto mb-1" />
           Miembros
@@ -780,24 +782,26 @@ export default function GroupDetail() {
                 <input type="number" step="0.01" className="input" value={expAmount} onChange={e => setExpAmount(e.target.value)} required />
               </div>
 
-              <div className="input-group">
-                <label className="mb-2 block font-medium text-sm">Dividir entre:</label>
-                <div style={{ maxHeight: '150px', overflowY: 'auto', border: '1.5px solid var(--border)', borderRadius: '12px', padding: '0.75rem' }}>
-                  {members.map(member => {
-                    const isChecked = selectedSplitMembers.includes(member.id);
-                    return (
-                      <label key={member.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem 0', cursor: 'pointer', fontSize: '0.9rem' }}>
-                        <input 
-                          type="checkbox" 
-                          checked={isChecked}
-                          onChange={() => handleCheckboxChange(member.id)}
-                        />
-                        <span>{member.full_name} {member.id === user.id ? '(Vos)' : ''}</span>
-                      </label>
-                    );
-                  })}
+              {group.group_type !== 'ledger' && (
+                <div className="input-group">
+                  <label className="mb-2 block font-medium text-sm">Dividir entre:</label>
+                  <div style={{ maxHeight: '150px', overflowY: 'auto', border: '1.5px solid var(--border)', borderRadius: '12px', padding: '0.75rem' }}>
+                    {members.map(member => {
+                      const isChecked = selectedSplitMembers.includes(member.id);
+                      return (
+                        <label key={member.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem 0', cursor: 'pointer', fontSize: '0.9rem' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={isChecked}
+                            onChange={() => handleCheckboxChange(member.id)}
+                          />
+                          <span>{member.full_name} {member.id === user.id ? '(Vos)' : ''}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="input-group">
                 <label className="mb-2 block font-medium text-sm">Comprobante / Ticket (Opcional)</label>
@@ -835,11 +839,13 @@ export default function GroupDetail() {
               </div>
 
               <p className="text-xs text-muted mb-4 text-center">
-                El {expType === 'income' ? 'ingreso' : 'gasto'} se dividirá en partes iguales entre los {selectedSplitMembers.length} miembros seleccionados.
+                {group.group_type === 'ledger' 
+                  ? `El ${expType === 'income' ? 'ingreso' : 'gasto'} quedará registrado en el torneo.` 
+                  : `El ${expType === 'income' ? 'ingreso' : 'gasto'} se dividirá en partes iguales entre los ${selectedSplitMembers.length} miembros seleccionados.`}
               </p>
               <div className="flex gap-2">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowExpenseModal(false)}>Cancelar</button>
-                <button type="submit" className="btn btn-primary" disabled={selectedSplitMembers.length === 0}>Guardar</button>
+                <button type="submit" className="btn btn-primary" disabled={group.group_type !== 'ledger' && selectedSplitMembers.length === 0}>Guardar</button>
               </div>
             </form>
           </div>
@@ -873,24 +879,26 @@ export default function GroupDetail() {
                 <input type="number" step="0.01" className="input" value={editAmount} onChange={e => setEditAmount(e.target.value)} required />
               </div>
 
-              <div className="input-group">
-                <label className="mb-2 block font-medium text-sm">Dividir entre:</label>
-                <div style={{ maxHeight: '150px', overflowY: 'auto', border: '1.5px solid var(--border)', borderRadius: '12px', padding: '0.75rem' }}>
-                  {members.map(member => {
-                    const isChecked = editSelectedSplitMembers.includes(member.id);
-                    return (
-                      <label key={member.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem 0', cursor: 'pointer', fontSize: '0.9rem' }}>
-                        <input 
-                          type="checkbox" 
-                          checked={isChecked}
-                          onChange={() => handleEditCheckboxChange(member.id)}
-                        />
-                        <span>{member.full_name} {member.id === user.id ? '(Vos)' : ''}</span>
-                      </label>
-                    );
-                  })}
+              {group.group_type !== 'ledger' && (
+                <div className="input-group">
+                  <label className="mb-2 block font-medium text-sm">Dividir entre:</label>
+                  <div style={{ maxHeight: '150px', overflowY: 'auto', border: '1.5px solid var(--border)', borderRadius: '12px', padding: '0.75rem' }}>
+                    {members.map(member => {
+                      const isChecked = editSelectedSplitMembers.includes(member.id);
+                      return (
+                        <label key={member.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem 0', cursor: 'pointer', fontSize: '0.9rem' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={isChecked}
+                            onChange={() => handleEditCheckboxChange(member.id)}
+                          />
+                          <span>{member.full_name} {member.id === user.id ? '(Vos)' : ''}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="input-group">
                 <label className="mb-2 block font-medium text-sm">Comprobante / Ticket</label>
@@ -928,11 +936,13 @@ export default function GroupDetail() {
               </div>
 
               <p className="text-xs text-muted mb-4 text-center">
-                El {editType === 'income' ? 'ingreso' : 'gasto'} se dividirá en partes iguales entre los {editSelectedSplitMembers.length} miembros seleccionados.
+                {group.group_type === 'ledger' 
+                  ? `El ${editType === 'income' ? 'ingreso' : 'gasto'} quedará registrado en el torneo.` 
+                  : `El ${editType === 'income' ? 'ingreso' : 'gasto'} se dividirá en partes iguales entre los ${editSelectedSplitMembers.length} miembros seleccionados.`}
               </p>
               <div className="flex gap-2">
                 <button type="button" className="btn btn-secondary" onClick={() => { setShowEditModal(false); setEditingExpense(null); }}>Cancelar</button>
-                <button type="submit" className="btn btn-primary" disabled={editSelectedSplitMembers.length === 0}>Guardar</button>
+                <button type="submit" className="btn btn-primary" disabled={group.group_type !== 'ledger' && editSelectedSplitMembers.length === 0}>Guardar</button>
               </div>
             </form>
           </div>
@@ -945,7 +955,7 @@ export default function GroupDetail() {
           <div className="card w-full animate-fade-in" style={{ maxWidth: '400px' }}>
             <h2 className="mb-4 text-danger">¿Eliminar Gasto?</h2>
             <p className="text-sm text-muted mb-6">
-              ¿Estás seguro de que deseas eliminar <strong>"{showDeleteExpenseConfirm.description}"</strong>? Esto recalculará y restablecerá todas las deudas de los participantes.
+              ¿Estás seguro de que deseas eliminar <strong>"{showDeleteExpenseConfirm.description}"</strong>? {group.group_type !== 'ledger' && "Esto recalculará y restablecerá todas las deudas de los participantes."}
             </p>
             <div className="flex gap-2">
               <button type="button" className="btn btn-secondary" onClick={() => setShowDeleteExpenseConfirm(null)}>Cancelar</button>

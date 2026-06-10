@@ -41,6 +41,16 @@ const createExpense = async (req, res) => {
     const { groupId } = req.params;
     const { description, amount_cents, currency, date, split_among, receipt_base64, receipt_mime_type, type } = req.body;
 
+    // 0. Get group type
+    const { data: group, error: groupError } = await supabase
+      .from('groups')
+      .select('group_type')
+      .eq('id', groupId)
+      .single();
+    
+    if (groupError || !group) throw new Error('Group not found');
+    const isLedger = group.group_type === 'ledger';
+
     // 1. Insert expense
     const { data: expense, error: expenseError } = await supabase
       .from('expenses')
@@ -77,7 +87,7 @@ const createExpense = async (req, res) => {
     }
 
     // 3. Insert expense shares
-    if (split_among && split_among.length > 0) {
+    if (!isLedger && split_among && split_among.length > 0) {
       const sharesToInsert = split_among.map(profileId => ({
         expense_id: expense.id,
         profile_id: profileId,
@@ -92,7 +102,9 @@ const createExpense = async (req, res) => {
     }
 
     // 4. Recalculate balances
-    await recalculateGroupBalances(groupId);
+    if (!isLedger) {
+      await recalculateGroupBalances(groupId);
+    }
 
     // 5. Simulate Notification
     console.log(`[NOTIFICATION] Sending email to participants of expense: ${finalDescription}`);
@@ -161,7 +173,7 @@ const updateExpense = async (req, res) => {
     // 1. Get old expense to verify ownership and get group_id & description
     const { data: oldExpense, error: fetchError } = await supabase
       .from('expenses')
-      .select('group_id, paid_by_id, description')
+      .select('group_id, paid_by_id, description, groups(group_type)')
       .eq('id', id)
       .single();
 
@@ -209,29 +221,35 @@ const updateExpense = async (req, res) => {
     if (updateError) throw updateError;
 
     // 4. Delete old shares and insert new ones
-    const { error: deleteSharesError } = await supabase
-      .from('expense_shares')
-      .delete()
-      .eq('expense_id', id);
-
-    if (deleteSharesError) throw deleteSharesError;
-
-    if (split_among && split_among.length > 0) {
-      const sharesToInsert = split_among.map(profileId => ({
-        expense_id: id,
-        profile_id: profileId,
-        share_type: profileId === req.user.id ? 'paid_and_split' : 'split'
-      }));
-
-      const { error: insertSharesError } = await supabase
+    const isLedger = oldExpense.groups?.group_type === 'ledger';
+    
+    if (!isLedger) {
+      const { error: deleteSharesError } = await supabase
         .from('expense_shares')
-        .insert(sharesToInsert);
+        .delete()
+        .eq('expense_id', id);
 
-      if (insertSharesError) throw insertSharesError;
+      if (deleteSharesError) throw deleteSharesError;
+
+      if (split_among && split_among.length > 0) {
+        const sharesToInsert = split_among.map(profileId => ({
+          expense_id: id,
+          profile_id: profileId,
+          share_type: profileId === req.user.id ? 'paid_and_split' : 'split'
+        }));
+
+        const { error: insertSharesError } = await supabase
+          .from('expense_shares')
+          .insert(sharesToInsert);
+
+        if (insertSharesError) throw insertSharesError;
+      }
     }
 
     // 5. Recalculate group balances
-    await recalculateGroupBalances(oldExpense.group_id);
+    if (!isLedger) {
+      await recalculateGroupBalances(oldExpense.group_id);
+    }
 
     res.status(200).json(expense);
   } catch (error) {
@@ -246,7 +264,7 @@ const deleteExpense = async (req, res) => {
     // 1. Get old expense to verify ownership and get group_id
     const { data: oldExpense, error: fetchError } = await supabase
       .from('expenses')
-      .select('group_id, paid_by_id')
+      .select('group_id, paid_by_id, groups(group_type)')
       .eq('id', id)
       .single();
 
@@ -267,7 +285,9 @@ const deleteExpense = async (req, res) => {
     if (deleteError) throw deleteError;
 
     // 3. Recalculate group balances
-    await recalculateGroupBalances(oldExpense.group_id);
+    if (oldExpense.groups?.group_type !== 'ledger') {
+      await recalculateGroupBalances(oldExpense.group_id);
+    }
 
     res.status(200).json({ message: 'Gasto eliminado con éxito' });
   } catch (error) {
