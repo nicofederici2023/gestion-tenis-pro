@@ -9,7 +9,6 @@ const {
   getGroupMembers,
   addMemberByEmail,
   addLocalMember,
-  addLocalMember,
   linkLocalMember,
   deleteMember,
   editLocalMember
