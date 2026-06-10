@@ -91,40 +91,33 @@ export default function NotificationPrompt() {
   };
 
   if (!isSupported) {
-    return (
-      <div className="card mt-6">
-        <div className="flex items-center gap-3">
-          <BellOff size={24} className="text-muted" />
-          <div>
-            <h3 className="font-semibold text-lg">Notificaciones</h3>
-            <p className="text-sm text-muted">Tu navegador no soporta notificaciones web.</p>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
+  }
+
+  // If already subscribed, do not show anything to save space
+  if (isSubscribed) {
+    return null;
   }
 
   return (
     <div className="card mt-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Bell size={24} className={isSubscribed ? "text-primary" : "text-muted"} />
+          <Bell size={24} className="text-muted" />
           <div>
             <h3 className="font-semibold text-lg">Notificaciones</h3>
             <p className="text-sm text-muted">
-              {isSubscribed 
-                ? 'Estás recibiendo notificaciones de nuevos gastos.' 
-                : 'Activa las notificaciones para enterarte cuando se registre un gasto.'}
+              Activa las notificaciones para enterarte cuando se registre un gasto.
             </p>
           </div>
         </div>
         <button 
           onClick={subscribeUser} 
-          disabled={loading || isSubscribed}
-          className={`btn ${isSubscribed ? 'btn-secondary' : 'btn-primary'}`}
+          disabled={loading}
+          className="btn btn-primary"
           style={{ width: 'auto' }}
         >
-          {loading ? 'Cargando...' : (isSubscribed ? 'Activadas' : 'Activar')}
+          {loading ? 'Cargando...' : 'Activar'}
         </button>
       </div>
     </div>
