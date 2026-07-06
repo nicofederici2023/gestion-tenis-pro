@@ -785,19 +785,19 @@ export default function GroupDetail() {
       {/* Modal Registrar Gasto */}
       {showExpenseModal && (
         <div className="modal-overlay">
-          <div className="card w-full animate-fade-in" style={{ maxWidth: '400px', maxHeight: 'calc(100vh - 8rem)', overflowY: 'auto' }}>
-            <h2 className="mb-4">Registrar {expType === 'income' ? 'Ingreso' : 'Gasto'}</h2>
+          <div className="card w-full animate-fade-in" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px', maxHeight: 'calc(100vh - 8rem)', overflowY: 'auto' }}>
+            <h2 className="mb-3 text-lg font-semibold">Registrar {expType === 'income' ? 'Ingreso' : 'Gasto'}</h2>
             <form onSubmit={handleAddExpense}>
               <div className="input-group">
                 <label className="mb-2 block">Tipo de Movimiento</label>
-                <div className="flex gap-2 p-1 rounded-xl mb-2 border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                <div className="flex gap-2 p-1 rounded-xl mb-2 border" style={{ backgroundColor: 'var(--surface-dim)', borderColor: 'var(--border)' }}>
                   <button
                     type="button"
                     onClick={() => setExpType('expense')}
                     className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors`}
                     style={{ 
-                      backgroundColor: expType === 'expense' ? 'white' : 'transparent',
-                      color: expType === 'expense' ? 'var(--text-main)' : 'var(--text-muted)',
+                      backgroundColor: expType === 'expense' ? 'var(--primary)' : 'transparent',
+                      color: expType === 'expense' ? 'white' : 'var(--text-muted)',
                       boxShadow: expType === 'expense' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
                     }}
                   >
@@ -808,8 +808,8 @@ export default function GroupDetail() {
                     onClick={() => setExpType('income')}
                     className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors`}
                     style={{ 
-                      backgroundColor: expType === 'income' ? 'white' : 'transparent',
-                      color: expType === 'income' ? 'var(--success)' : 'var(--text-muted)',
+                      backgroundColor: expType === 'income' ? 'var(--success)' : 'transparent',
+                      color: expType === 'income' ? 'white' : 'var(--text-muted)',
                       boxShadow: expType === 'income' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
                     }}
                   >
@@ -899,19 +899,19 @@ export default function GroupDetail() {
       {/* Modal Editar Gasto */}
       {showEditModal && (
         <div className="modal-overlay">
-          <div className="card w-full animate-fade-in" style={{ maxWidth: '400px', maxHeight: 'calc(100vh - 8rem)', overflowY: 'auto' }}>
-            <h2 className="mb-4">Editar {editType === 'income' ? 'Ingreso' : 'Gasto'}</h2>
+          <div className="card w-full animate-fade-in" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px', maxHeight: 'calc(100vh - 8rem)', overflowY: 'auto' }}>
+            <h2 className="mb-3 text-lg font-semibold">Editar {editType === 'income' ? 'Ingreso' : 'Gasto'}</h2>
             <form onSubmit={handleEditExpense}>
               <div className="input-group">
                 <label className="mb-2 block">Tipo de Movimiento</label>
-                <div className="flex gap-2 p-1 rounded-xl mb-2 border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                <div className="flex gap-2 p-1 rounded-xl mb-2 border" style={{ backgroundColor: 'var(--surface-dim)', borderColor: 'var(--border)' }}>
                   <button
                     type="button"
                     onClick={() => setEditType('expense')}
                     className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors`}
                     style={{ 
-                      backgroundColor: editType === 'expense' ? 'white' : 'transparent',
-                      color: editType === 'expense' ? 'var(--text-main)' : 'var(--text-muted)',
+                      backgroundColor: editType === 'expense' ? 'var(--primary)' : 'transparent',
+                      color: editType === 'expense' ? 'white' : 'var(--text-muted)',
                       boxShadow: editType === 'expense' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
                     }}
                   >
@@ -922,8 +922,8 @@ export default function GroupDetail() {
                     onClick={() => setEditType('income')}
                     className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors`}
                     style={{ 
-                      backgroundColor: editType === 'income' ? 'white' : 'transparent',
-                      color: editType === 'income' ? 'var(--success)' : 'var(--text-muted)',
+                      backgroundColor: editType === 'income' ? 'var(--success)' : 'transparent',
+                      color: editType === 'income' ? 'white' : 'var(--text-muted)',
                       boxShadow: editType === 'income' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
                     }}
                   >
