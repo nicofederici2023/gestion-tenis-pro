@@ -16,17 +16,17 @@ const uploadReceiptToSupabase = async (base64Data, mimeType, expenseId) => {
 
     // 3. Upload buffer to Supabase Storage
     const { error: uploadError } = await supabase.storage
-      .from('receipts')
+      .from('RECEIPTS')
       .upload(fileName, buffer, {
         contentType: mimeType || 'image/jpeg',
-        upsert: true
+        upsert: false
       });
 
     if (uploadError) throw uploadError;
 
     // 4. Get public URL
     const { data } = supabase.storage
-      .from('receipts')
+      .from('RECEIPTS')
       .getPublicUrl(fileName);
 
     return data.publicUrl;
