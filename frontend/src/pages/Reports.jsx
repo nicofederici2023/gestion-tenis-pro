@@ -177,19 +177,25 @@ export default function Reports() {
       ) : (
         <>
           {/* Tarjetas de Resumen Global */}
-          <div className="stats-grid mb-6">
-            <div className="card stat-card">
-              <span className="stat-label">Total Torneos</span>
-              <span className="stat-value">{groups.length}</span>
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="card flex flex-col justify-center items-center text-center p-6 border-2" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary)' }}>
+                <Trophy size={24} />
+              </div>
+              <span className="text-sm font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Total Torneos</span>
+              <span className="text-3xl font-bold" style={{ color: 'var(--text-main)' }}>{groups.length}</span>
             </div>
-            <div className="card stat-card">
-              <span className="stat-label">Balance Neto Total</span>
+            <div className="card flex flex-col justify-center items-center text-center p-6 border-2" style={{ borderColor: 'rgba(204, 255, 0, 0.3)', backgroundColor: 'var(--surface)', backgroundImage: 'linear-gradient(145deg, rgba(204, 255, 0, 0.05) 0%, rgba(204, 255, 0, 0.15) 100%)' }}>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 shadow-sm" style={{ backgroundColor: 'var(--secondary-light)', color: 'var(--secondary)' }}>
+                <BarChart3 size={24} />
+              </div>
+              <span className="text-sm font-medium mb-1" style={{ color: 'var(--text-main)' }}>Balance Neto Total</span>
               <div className="flex flex-col">
                 {Object.keys(globalTotals).length === 0 ? (
-                  <span className="stat-value">$ 0,00</span>
+                  <span className="text-3xl font-bold" style={{ color: 'var(--secondary)' }}>$ 0,00</span>
                 ) : (
                   Object.entries(globalTotals).map(([currency, cents]) => (
-                    <span key={currency} className="stat-value text-success">
+                    <span key={currency} className="text-3xl font-bold" style={{ color: 'var(--secondary)' }}>
                       {formatCurrency(cents, currency)}
                     </span>
                   ))

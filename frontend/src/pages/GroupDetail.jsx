@@ -542,14 +542,19 @@ export default function GroupDetail() {
                     <div key={exp.id} className="expense-list-item p-4 flex justify-between items-center">
                       <div className="flex items-center gap-3">
                         {receiptUrl && (
-                          <div className="shrink-0 relative cursor-pointer print-hide" onClick={() => setViewingReceiptUrl(receiptUrl)} title="Tocar para ampliar">
-                             <img 
-                               src={receiptUrl} 
-                               alt="Comprobante" 
-                               className="w-12 h-12 rounded-lg object-cover border shadow-sm" 
-                             />
-                             <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 border shadow-sm text-primary">
-                               <Camera size={10} />
+                          <div className="shrink-0 cursor-pointer print-hide" onClick={() => setViewingReceiptUrl(receiptUrl)} title="Ver comprobante">
+                             <div className="w-12 h-12 rounded-xl border border-gray-200 overflow-hidden relative group" style={{ borderColor: 'var(--border)' }}>
+                               <img 
+                                 src={receiptUrl} 
+                                 alt="Comprobante" 
+                                 className="w-full h-full object-cover transition-transform group-hover:scale-110" 
+                               />
+                               <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                 <Eye size={16} className="text-white" />
+                               </div>
+                               <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 border shadow-sm text-primary scale-75">
+                                 <Receipt size={14} />
+                               </div>
                              </div>
                           </div>
                         )}
@@ -609,22 +614,34 @@ export default function GroupDetail() {
                   <p className="text-muted text-center py-4 bg-white/5 rounded-lg text-sm">¡Todos están al día! No hay transacciones pendientes 🎉</p>
                 ) : null}
                 {settlements.map((setl, idx) => (
-                  <div key={idx} className="flex justify-between items-center py-3 border-b last:border-0 border-gray-100/10">
-                    <div className="flex-1">
-                      <span className="font-semibold text-danger">{setl.from_profile?.full_name || 'Alguien'}</span>
-                      <span className="text-muted text-sm mx-1">debe pagarle a</span>
-                      <span className="font-semibold text-success">{setl.to_profile?.full_name || 'Alguien'}</span>
+                  <div key={idx} className="flex flex-col sm:flex-row justify-between items-center p-4 border rounded-xl bg-white shadow-sm mb-2 gap-4" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0" style={{ backgroundColor: 'var(--danger-light, #fee2e2)', color: 'var(--danger)' }}>
+                        {setl.from_profile?.full_name?.charAt(0).toUpperCase() || '?'}
+                      </div>
+                      <ArrowRightLeft size={16} className="text-gray-300" />
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0" style={{ backgroundColor: 'var(--success-light, #dcfce7)', color: 'var(--success)' }}>
+                        {setl.to_profile?.full_name?.charAt(0).toUpperCase() || '?'}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted leading-tight">Transferencia sugerida</span>
+                        <span className="font-semibold text-sm mt-0.5">
+                          <span className="text-danger">{setl.from_profile?.full_name || 'Alguien'}</span>
+                          <span className="mx-1 text-muted font-normal text-xs">a</span>
+                          <span className="text-success">{setl.to_profile?.full_name || 'Alguien'}</span>
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="font-bold" style={{ whiteSpace: 'nowrap' }}>
+                    <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                      <div className="font-bold text-lg" style={{ whiteSpace: 'nowrap' }}>
                         ${(setl.amount_cents / 100).toFixed(2)}
                       </div>
                       <button 
                         onClick={() => handleSettleDebt(setl)}
-                        className="btn btn-secondary text-xs" 
-                        style={{ width: 'auto', padding: '0.4rem 0.8rem', backgroundColor: 'var(--primary)', color: 'white', border: 'none' }}
+                        className="btn btn-primary text-sm flex items-center gap-1 shrink-0" 
+                        style={{ width: 'auto', padding: '0.5rem 1rem' }}
                       >
-                        Saldar
+                        <Check size={16} /> Saldar
                       </button>
                     </div>
                   </div>
@@ -637,13 +654,23 @@ export default function GroupDetail() {
               <div className="flex flex-col gap-2">
                 {balances.length === 0 ? <p className="text-muted text-center py-2 text-sm">Sin saldos cruzados.</p> : null}
                 {balances.map(bal => (
-                  <div key={bal.id} className="flex justify-between items-center py-2 border-b last:border-0 border-gray-100/10 text-sm">
-                    <div className="flex-1">
-                      <span className="font-medium text-danger">{bal.debtor?.full_name}</span>
-                      <span className="text-muted mx-1">le debe a</span>
-                      <span className="font-medium text-success">{bal.creditor?.full_name}</span>
+                  <div key={bal.id} className="flex justify-between items-center p-3 border rounded-lg mb-2" style={{ backgroundColor: 'var(--surface-dim)', borderColor: 'var(--border)' }}>
+                    <div className="flex items-center gap-2">
+                      <div className="flex -space-x-2">
+                        <div className="w-7 h-7 rounded-full border-2 border-white flex items-center justify-center font-bold text-[10px] z-10" style={{ backgroundColor: 'var(--danger-light, #fee2e2)', color: 'var(--danger)' }}>
+                          {bal.debtor?.full_name?.charAt(0).toUpperCase() || '?'}
+                        </div>
+                        <div className="w-7 h-7 rounded-full border-2 border-white flex items-center justify-center font-bold text-[10px]" style={{ backgroundColor: 'var(--success-light, #dcfce7)', color: 'var(--success)' }}>
+                          {bal.creditor?.full_name?.charAt(0).toUpperCase() || '?'}
+                        </div>
+                      </div>
+                      <div className="text-sm">
+                        <span className="font-medium text-danger">{bal.debtor?.full_name}</span>
+                        <span className="text-muted mx-1 text-xs">le debe a</span>
+                        <span className="font-medium text-success">{bal.creditor?.full_name}</span>
+                      </div>
                     </div>
-                    <div className="font-semibold">
+                    <div className="font-bold text-gray-700">
                       ${(bal.amount_cents / 100).toFixed(2)}
                     </div>
                   </div>
@@ -762,16 +789,33 @@ export default function GroupDetail() {
             <h2 className="mb-4">Registrar {expType === 'income' ? 'Ingreso' : 'Gasto'}</h2>
             <form onSubmit={handleAddExpense}>
               <div className="input-group">
-                <label>Tipo de Movimiento</label>
-                <select 
-                  className="input" 
-                  value={expType} 
-                  onChange={e => setExpType(e.target.value)}
-                  style={{ background: 'var(--surface)', color: 'var(--text-main)', cursor: 'pointer' }}
-                >
-                  <option value="expense">Gasto (Pago de canchas, trofeos, pelotas, etc.)</option>
-                  <option value="income">Ingreso (Publicidad, inscripciones de jugadores, etc.)</option>
-                </select>
+                <label className="mb-2 block">Tipo de Movimiento</label>
+                <div className="flex gap-2 p-1 rounded-xl mb-2 border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                  <button
+                    type="button"
+                    onClick={() => setExpType('expense')}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors`}
+                    style={{ 
+                      backgroundColor: expType === 'expense' ? 'white' : 'transparent',
+                      color: expType === 'expense' ? 'var(--text-main)' : 'var(--text-muted)',
+                      boxShadow: expType === 'expense' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                    }}
+                  >
+                    Gasto
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setExpType('income')}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors`}
+                    style={{ 
+                      backgroundColor: expType === 'income' ? 'white' : 'transparent',
+                      color: expType === 'income' ? 'var(--success)' : 'var(--text-muted)',
+                      boxShadow: expType === 'income' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                    }}
+                  >
+                    Ingreso
+                  </button>
+                </div>
               </div>
               <div className="input-group">
                 <label>Descripción</label>
@@ -859,16 +903,33 @@ export default function GroupDetail() {
             <h2 className="mb-4">Editar {editType === 'income' ? 'Ingreso' : 'Gasto'}</h2>
             <form onSubmit={handleEditExpense}>
               <div className="input-group">
-                <label>Tipo de Movimiento</label>
-                <select 
-                  className="input" 
-                  value={editType} 
-                  onChange={e => setEditType(e.target.value)}
-                  style={{ background: 'var(--surface)', color: 'var(--text-main)', cursor: 'pointer' }}
-                >
-                  <option value="expense">Gasto (Pago de canchas, trofeos, pelotas, etc.)</option>
-                  <option value="income">Ingreso (Publicidad, inscripciones de jugadores, etc.)</option>
-                </select>
+                <label className="mb-2 block">Tipo de Movimiento</label>
+                <div className="flex gap-2 p-1 rounded-xl mb-2 border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                  <button
+                    type="button"
+                    onClick={() => setEditType('expense')}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors`}
+                    style={{ 
+                      backgroundColor: editType === 'expense' ? 'white' : 'transparent',
+                      color: editType === 'expense' ? 'var(--text-main)' : 'var(--text-muted)',
+                      boxShadow: editType === 'expense' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                    }}
+                  >
+                    Gasto
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditType('income')}
+                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors`}
+                    style={{ 
+                      backgroundColor: editType === 'income' ? 'white' : 'transparent',
+                      color: editType === 'income' ? 'var(--success)' : 'var(--text-muted)',
+                      boxShadow: editType === 'income' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                    }}
+                  >
+                    Ingreso
+                  </button>
+                </div>
               </div>
               <div className="input-group">
                 <label>Descripción</label>
