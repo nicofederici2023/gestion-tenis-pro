@@ -177,14 +177,7 @@ export default function Reports() {
       ) : (
         <>
           {/* Tarjetas de Resumen Global */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="card flex flex-col justify-center items-center text-center p-6 border-2" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary)' }}>
-                <Trophy size={24} />
-              </div>
-              <span className="text-sm font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Total Torneos</span>
-              <span className="text-3xl font-bold" style={{ color: 'var(--text-main)' }}>{groups.length}</span>
-            </div>
+          <div className="grid grid-cols-1 gap-4 mb-6">
             <div className="card flex flex-col justify-center items-center text-center p-6 border-2" style={{ borderColor: 'rgba(204, 255, 0, 0.3)', backgroundColor: 'var(--surface)', backgroundImage: 'linear-gradient(145deg, rgba(204, 255, 0, 0.05) 0%, rgba(204, 255, 0, 0.15) 100%)' }}>
               <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 shadow-sm" style={{ backgroundColor: 'var(--secondary-light)', color: 'var(--secondary)' }}>
                 <BarChart3 size={24} />
@@ -212,64 +205,62 @@ export default function Reports() {
               const isExpanded = !!expandedGroups[group.id];
 
               return (
-                <div key={group.id} className="card group-report-card">
+                <div key={group.id} className="mb-4 bg-white dark:bg-[#131B2E] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
                   {/* Cabecera de la Tarjeta del Torneo */}
                   <div 
-                    className="group-report-header"
+                    className="flex justify-between items-center p-4 bg-gray-50/50 dark:bg-[#1A2338] cursor-pointer hover:bg-gray-100 dark:hover:bg-[#1F293F] transition-colors"
                     onClick={() => toggleGroup(group.id)}
                   >
-                    <div className="flex-1">
+                    <div className="flex-1 pr-4">
                       <div className="flex items-center gap-2 mb-1">
-                        <Trophy size={18} className="text-success" />
-                        <h3 className="group-title">{group.name}</h3>
+                        <Trophy size={16} className="text-success" />
+                        <h3 className="font-bold text-base text-gray-800 dark:text-gray-100 leading-tight">{group.name}</h3>
                       </div>
-                      <p className="text-xs text-muted truncate max-w-xs">
+                      <p className="text-xs text-muted truncate max-w-[200px]">
                         {group.description || 'Sin descripción'}
                       </p>
                     </div>
 
-                    <div className="text-right flex items-center gap-4">
-                      <div>
-                        <p className="text-xs text-muted uppercase tracking-wider font-semibold">Total Gastado (Neto)</p>
-                        <p className="text-sm font-bold text-success">
-                          {formatCurrency(totalCents, group.currency || 'ARS')}
-                        </p>
-                      </div>
-                      {isExpanded ? <ChevronUp size={20} className="text-muted print-hide" /> : <ChevronDown size={20} className="text-muted print-hide" />}
+                    <div className="text-right shrink-0">
+                      <p className="text-[10px] text-muted uppercase font-bold tracking-wider mb-1">Gasto (Neto)</p>
+                      <p className="text-sm font-bold text-success flex items-center justify-end gap-1">
+                        {formatCurrency(totalCents, group.currency || 'ARS')}
+                        {isExpanded ? <ChevronUp size={16} className="text-muted ml-1" /> : <ChevronDown size={16} className="text-muted ml-1" />}
+                      </p>
                     </div>
                   </div>
 
                   {/* Detalle de Gastos */}
                   {isExpanded && (
-                    <div className="group-report-details mt-2 pt-2 border-t">
+                    <div className="border-t border-gray-100 dark:border-gray-800/50">
                       {groupExpenses.length === 0 ? (
-                        <p className="text-xs text-muted text-center py-4">
+                        <p className="text-xs text-muted text-center py-6">
                           No hay movimientos registrados en este torneo.
                         </p>
                       ) : (
-                        <div className="flex flex-col">
+                        <div className="divide-y divide-gray-100 dark:divide-gray-800/50">
                           {groupExpenses.map(exp => {
                             const isIncome = exp.type === 'income';
                             return (
-                              <div key={exp.id} className="expense-report-item">
-                                <div className="flex-1">
-                                  <p className="expense-description font-medium text-sm">
+                              <div key={exp.id} className="grid grid-cols-[1fr_auto] gap-4 p-4 hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+                                <div>
+                                  <p className="font-semibold text-sm text-gray-800 dark:text-gray-200 mb-1.5 leading-tight">
                                     {cleanDescription(exp.description)}
                                   </p>
-                                  <div className="flex items-center gap-4 text-xs text-muted mt-1">
-                                    <span className="flex items-center gap-1 expense-date">
+                                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted">
+                                    <span className="flex items-center gap-1 font-medium">
                                       <Calendar size={12} />
                                       {formatDateShort(exp.date)}
                                     </span>
-                                    <span className="flex items-center gap-1">
+                                    <span className="flex items-center gap-1 font-medium">
                                       <User size={12} />
                                       {isIncome ? 'Cobró' : 'Pagó'} {exp.profiles?.full_name || 'Miembro'}
                                     </span>
                                   </div>
                                 </div>
-                                <div className="text-right">
+                                <div className="text-right flex items-center">
                                   <span 
-                                    className="font-semibold text-sm"
+                                    className="font-bold text-sm tracking-wide"
                                     style={{ color: isIncome ? 'var(--secondary)' : 'var(--text-main)' }}
                                   >
                                     {isIncome ? '+' : '-'} {formatCurrency(exp.amount_cents, exp.currency || 'ARS')}

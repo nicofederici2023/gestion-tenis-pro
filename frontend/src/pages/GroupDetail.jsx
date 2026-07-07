@@ -453,11 +453,11 @@ export default function GroupDetail() {
 
   return (
     <div>
-      <div className="header mb-4" style={{ margin: '-1.5rem -1.5rem 1.5rem -1.5rem' }}>
-        <button onClick={() => navigate(-1)} className="btn btn-secondary" style={{padding: '0.5rem', width: 'auto', border: 'none'}}>
+      <div className="flex items-center gap-3 mb-6 mt-2">
+        <button onClick={() => navigate(-1)} className="btn btn-secondary p-2 w-auto border-none shadow-none text-muted hover:text-primary bg-transparent">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-lg truncate ml-3 flex-1">{group.name}</h1>
+        <h1 className="text-xl font-bold flex-1 leading-tight">{group.name}</h1>
       </div>
 
       <div className="tabs">
@@ -539,63 +539,63 @@ export default function GroupDetail() {
                   const isIncome = exp.type === 'income';
 
                   return (
-                    <div key={exp.id} className="expense-list-item p-4 flex justify-between items-center">
-                      <div className="flex items-center gap-3">
-                        {receiptUrl && (
-                          <div className="shrink-0 cursor-pointer print-hide" onClick={() => setViewingReceiptUrl(receiptUrl)} title="Ver comprobante">
-                             <div className="w-12 h-12 rounded-xl border border-gray-200 overflow-hidden relative group" style={{ borderColor: 'var(--border)' }}>
-                               <img 
-                                 src={receiptUrl} 
-                                 alt="Comprobante" 
-                                 className="w-full h-full object-cover transition-transform group-hover:scale-110" 
-                               />
-                               <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                 <Eye size={16} className="text-white" />
+                    <div key={exp.id} className="p-4 border-b border-gray-100 dark:border-gray-800 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex gap-3 flex-1 pr-2">
+                          {receiptUrl && (
+                            <div className="shrink-0 cursor-pointer print-hide" onClick={() => setViewingReceiptUrl(receiptUrl)} title="Ver comprobante">
+                               <div className="w-12 h-12 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden relative group" style={{ borderColor: 'var(--border)' }}>
+                                 <img 
+                                   src={receiptUrl} 
+                                   alt="Comprobante" 
+                                   className="w-full h-full object-cover transition-transform group-hover:scale-110" 
+                                 />
+                                 <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                   <Eye size={16} className="text-white" />
+                                 </div>
+                                 <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 border shadow-sm text-primary scale-75 dark:bg-gray-800">
+                                   <Receipt size={14} />
+                                 </div>
                                </div>
-                               <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 border shadow-sm text-primary scale-75">
-                                 <Receipt size={14} />
-                               </div>
-                             </div>
+                            </div>
+                          )}
+                          <div>
+                            <h3 className="font-semibold text-sm leading-tight text-gray-800 dark:text-gray-200 mb-1">{desc}</h3>
+                            <p className="text-xs text-muted">
+                              {isIncome ? 'Cobró' : 'Pagó'} {exp.profiles?.full_name || 'Miembro'}
+                            </p>
                           </div>
-                        )}
-                        <div>
-                          <h3 className="text-base">{desc}</h3>
-                          <p className="text-xs text-muted mb-1">
-                            {isIncome ? 'Cobró' : 'Pagó'} {exp.profiles?.full_name || 'Miembro'}
-                          </p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div 
+                            className="font-bold text-base" 
+                            style={{ color: isIncome ? 'var(--secondary)' : 'var(--text-main)' }}
+                          >
+                            {isIncome ? '+' : '-'} ${(exp.amount_cents / 100).toFixed(2)}
+                          </div>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <div 
-                          className="font-bold" 
-                          style={{ 
-                            whiteSpace: 'nowrap',
-                            color: isIncome ? 'var(--secondary)' : 'var(--text-main)' 
-                          }}
-                        >
-                          {isIncome ? '+' : '-'} ${(exp.amount_cents / 100).toFixed(2)}
+                      
+                      {canModify && (
+                        <div className="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-100/50 dark:border-gray-800/50 print-hide">
+                          <button
+                            onClick={() => openEditExpenseModal(exp)}
+                            className="btn btn-secondary text-xs flex items-center justify-center gap-1.5"
+                            title="Editar"
+                            style={{ padding: '0.4rem 0.75rem', width: 'auto', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', border: 'none', borderRadius: '0.5rem' }}
+                          >
+                            <Edit2 size={14} /> Editar
+                          </button>
+                          <button
+                            onClick={() => setShowDeleteExpenseConfirm(exp)}
+                            className="btn btn-secondary text-xs flex items-center justify-center gap-1.5"
+                            style={{ padding: '0.4rem 0.75rem', width: 'auto', backgroundColor: 'var(--danger-light)', color: 'var(--danger)', border: 'none', borderRadius: '0.5rem' }}
+                            title="Eliminar"
+                          >
+                            <Trash2 size={14} /> Eliminar
+                          </button>
                         </div>
-                        {canModify && (
-                          <div className="flex gap-2 print-hide">
-                            <button
-                              onClick={() => openEditExpenseModal(exp)}
-                              className="context-menu-trigger"
-                              title="Editar"
-                              style={{ padding: '4px' }}
-                            >
-                              <Edit2 size={16} />
-                            </button>
-                            <button
-                              onClick={() => setShowDeleteExpenseConfirm(exp)}
-                              className="context-menu-trigger"
-                              style={{ color: 'var(--danger)', padding: '4px' }}
-                              title="Eliminar"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                      )}
                     </div>
                   );
                 })}
