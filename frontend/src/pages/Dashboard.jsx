@@ -179,7 +179,7 @@ export default function Dashboard() {
                     <div className="mt-3 text-xs text-muted flex items-center gap-2">
                       <span className="truncate">Creado el {new Date(group.created_at).toLocaleDateString()} {isCreator && ' • Creador'}</span>
                       {group.group_type === 'ledger' ? (
-                        <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: 'var(--surface)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
+                        <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.3)' }}>
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                           SOLO REGISTRO
                         </span>

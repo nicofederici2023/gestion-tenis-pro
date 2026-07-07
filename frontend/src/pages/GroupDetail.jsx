@@ -453,27 +453,27 @@ export default function GroupDetail() {
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-6 mt-2">
+      <div className="flex items-center gap-3 mb-4 mt-1">
         <button onClick={() => navigate(-1)} className="btn btn-secondary p-2 w-auto border-none shadow-none text-muted hover:text-primary bg-transparent">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold flex-1 leading-tight">{group.name}</h1>
+        <h1 className="text-lg font-bold flex-1 leading-tight line-clamp-2">{group.name}</h1>
       </div>
 
-      <div className="tabs">
-        <div className={`tab ${activeTab === 'expenses' ? 'active' : ''}`} onClick={() => setActiveTab('expenses')}>
-          <Receipt size={18} className="mx-auto mb-1" />
-          Gastos
+      <div className="tabs" style={{ display: 'flex', justifyContent: 'space-around', backgroundColor: 'rgba(15, 20, 35, 0.5)', padding: '0.5rem', borderRadius: '1rem', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className={`tab ${activeTab === 'expenses' ? 'active' : ''}`} onClick={() => setActiveTab('expenses')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '0.5rem', flex: 1, textAlign: 'center', color: activeTab === 'expenses' ? 'var(--primary)' : 'var(--text-muted)' }}>
+          <Receipt size={18} />
+          <span style={{ fontSize: '0.75rem', fontWeight: activeTab === 'expenses' ? '600' : '400' }}>Gastos</span>
         </div>
         {group.group_type !== 'ledger' && (
-          <div className={`tab ${activeTab === 'balances' ? 'active' : ''}`} onClick={() => setActiveTab('balances')}>
-            <Calculator size={18} className="mx-auto mb-1" />
-            Saldos
+          <div className={`tab ${activeTab === 'balances' ? 'active' : ''}`} onClick={() => setActiveTab('balances')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '0.5rem', flex: 1, textAlign: 'center', color: activeTab === 'balances' ? 'var(--primary)' : 'var(--text-muted)' }}>
+            <Calculator size={18} />
+            <span style={{ fontSize: '0.75rem', fontWeight: activeTab === 'balances' ? '600' : '400' }}>Saldos</span>
           </div>
         )}
-        <div className={`tab ${activeTab === 'members' ? 'active' : ''}`} onClick={() => setActiveTab('members')}>
-          <Users size={18} className="mx-auto mb-1" />
-          Miembros
+        <div className={`tab ${activeTab === 'members' ? 'active' : ''}`} onClick={() => setActiveTab('members')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '0.5rem', flex: 1, textAlign: 'center', color: activeTab === 'members' ? 'var(--primary)' : 'var(--text-muted)' }}>
+          <Users size={18} />
+          <span style={{ fontSize: '0.75rem', fontWeight: activeTab === 'members' ? '600' : '400' }}>Miembros</span>
         </div>
       </div>
 
@@ -481,10 +481,10 @@ export default function GroupDetail() {
         {activeTab === 'expenses' && (
           <div>
             <div className="flex gap-2 mb-4 print-hide">
-              <button className="btn btn-primary" onClick={openExpenseModal} style={{ flex: 2 }}>
-                <Plus size={18} /> Añadir Gasto / Ingreso
+              <button className="btn btn-primary" onClick={openExpenseModal} style={{ flex: 2, padding: '0.6rem 0.5rem', fontSize: '0.85rem' }}>
+                <Plus size={16} className="inline mr-1" /> Añadir Gasto / Ingreso
               </button>
-              <button className="btn btn-secondary" onClick={() => window.print()} style={{ flex: 1 }}>
+              <button className="btn btn-secondary" onClick={() => window.print()} style={{ flex: 1, padding: '0.6rem 0.5rem', fontSize: '0.85rem', backgroundColor: 'rgba(255,255,255,0.05)', color: 'var(--text-main)', border: '1px solid rgba(255,255,255,0.1)' }}>
                 Exportar PDF
               </button>
             </div>
