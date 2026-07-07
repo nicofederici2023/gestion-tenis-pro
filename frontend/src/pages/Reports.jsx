@@ -205,27 +205,27 @@ export default function Reports() {
               const isExpanded = !!expandedGroups[group.id];
 
               return (
-                <div key={group.id} className="mb-4 bg-white dark:bg-[#131B2E] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
+                <div key={group.id} className="mb-4 bg-[#0f1423] rounded-xl border border-gray-800 overflow-hidden shadow-xl">
                   {/* Cabecera de la Tarjeta del Torneo */}
                   <div 
-                    className="flex justify-between items-center p-4 bg-gray-50/50 dark:bg-[#1A2338] cursor-pointer hover:bg-gray-100 dark:hover:bg-[#1F293F] transition-colors"
+                    className="flex justify-between items-center p-4 bg-[#131b2e] cursor-pointer hover:bg-[#1a233a] transition-colors"
                     onClick={() => toggleGroup(group.id)}
                   >
                     <div className="flex-1 pr-4">
                       <div className="flex items-center gap-2 mb-1">
                         <Trophy size={16} className="text-success" />
-                        <h3 className="font-bold text-base text-gray-800 dark:text-gray-100 leading-tight">{group.name}</h3>
+                        <h3 className="font-bold text-base text-gray-100 leading-tight">{group.name}</h3>
                       </div>
-                      <p className="text-xs text-muted truncate max-w-[200px]">
+                      <p className="text-xs text-gray-400 truncate max-w-[200px]">
                         {group.description || 'Sin descripción'}
                       </p>
                     </div>
 
                     <div className="text-right shrink-0">
-                      <p className="text-[10px] text-muted uppercase font-bold tracking-wider mb-1">Gasto (Neto)</p>
+                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Gasto (Neto)</p>
                       <p className="text-sm font-bold text-success flex items-center justify-end gap-1">
                         {formatCurrency(totalCents, group.currency || 'ARS')}
-                        {isExpanded ? <ChevronUp size={16} className="text-muted ml-1" /> : <ChevronDown size={16} className="text-muted ml-1" />}
+                        {isExpanded ? <ChevronUp size={16} className="text-gray-400 ml-1" /> : <ChevronDown size={16} className="text-gray-400 ml-1" />}
                       </p>
                     </div>
                   </div>
@@ -238,16 +238,16 @@ export default function Reports() {
                           No hay movimientos registrados en este torneo.
                         </p>
                       ) : (
-                        <div className="divide-y divide-gray-100 dark:divide-gray-800/50">
+                        <div className="flex flex-col">
                           {groupExpenses.map(exp => {
                             const isIncome = exp.type === 'income';
                             return (
-                              <div key={exp.id} className="grid grid-cols-[1fr_auto] gap-4 p-4 hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+                              <div key={exp.id} className="grid grid-cols-[1fr_auto] gap-4 p-4 border-b border-gray-800/50 last:border-0 even:bg-[#131b2e] odd:bg-[#171f32] hover:bg-[#1a233a] transition-colors">
                                 <div>
-                                  <p className="font-semibold text-sm text-gray-800 dark:text-gray-200 mb-1.5 leading-tight">
+                                  <p className="font-semibold text-sm text-gray-100 mb-1.5 leading-tight">
                                     {cleanDescription(exp.description)}
                                   </p>
-                                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted">
+                                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-400">
                                     <span className="flex items-center gap-1 font-medium">
                                       <Calendar size={12} />
                                       {formatDateShort(exp.date)}

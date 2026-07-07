@@ -492,21 +492,21 @@ export default function GroupDetail() {
             {expenses.length === 0 ? (
               <p className="text-muted text-center py-4">No hay movimientos aún.</p>
             ) : (
-              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              <div className="rounded-xl overflow-hidden shadow-xl border border-gray-800 bg-[#0f1423]">
                 {expenses.map((exp, idx) => {
                   const isSettlement = exp.description.startsWith('Liquidación:');
                   const canModify = exp.paid_by_id === user.id;
 
                   if (isSettlement) {
                     return (
-                      <div key={exp.id} className="expense-list-item p-4 flex justify-between items-center" style={{ borderLeft: '4px solid var(--secondary)', background: 'var(--secondary-light)' }}>
+                      <div key={exp.id} className="p-4 flex justify-between items-center border-b border-gray-800/50 even:bg-[#131b2e] odd:bg-[#171f32] last:border-0" style={{ borderLeft: '4px solid var(--secondary)' }}>
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center print-hide">
+                          <div className="w-10 h-10 rounded-full bg-emerald-900/30 text-emerald-400 flex items-center justify-center print-hide">
                             <ArrowRightLeft size={18} />
                           </div>
                           <div>
                             <h3 className="text-base font-semibold" style={{ color: 'var(--secondary)' }}>{exp.description}</h3>
-                            <p className="text-xs text-muted">Pago registrado el {new Date(exp.created_at).toLocaleDateString()}</p>
+                            <p className="text-xs text-gray-400">Pago registrado el {new Date(exp.created_at).toLocaleDateString()}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
@@ -516,11 +516,10 @@ export default function GroupDetail() {
                           {canModify && (
                             <button
                               onClick={() => setShowDeleteExpenseConfirm(exp)}
-                              className="context-menu-trigger print-hide"
-                              style={{ color: 'var(--danger)', padding: '4px' }}
+                              className="text-gray-400 hover:text-danger transition-colors p-1 print-hide"
                               title="Eliminar liquidación"
                             >
-                              <Trash2 size={18} />
+                              <Trash2 size={16} />
                             </button>
                           )}
                         </div>
@@ -539,63 +538,57 @@ export default function GroupDetail() {
                   const isIncome = exp.type === 'income';
 
                   return (
-                    <div key={exp.id} className="p-4 border-b border-gray-100 dark:border-gray-800 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
+                    <div key={exp.id} className="p-4 border-b border-gray-800/50 hover:bg-[#1a233a] transition-colors last:border-0 even:bg-[#131b2e] odd:bg-[#171f32]">
+                      <div className="flex justify-between items-center">
                         <div className="flex gap-3 flex-1 pr-2">
                           {receiptUrl && (
-                            <div className="shrink-0 cursor-pointer print-hide" onClick={() => setViewingReceiptUrl(receiptUrl)} title="Ver comprobante">
-                               <div className="w-12 h-12 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden relative group" style={{ borderColor: 'var(--border)' }}>
+                            <div className="shrink-0 cursor-pointer print-hide mt-0.5" onClick={() => setViewingReceiptUrl(receiptUrl)} title="Ver comprobante">
+                               <div className="w-10 h-10 rounded-lg border border-gray-700 overflow-hidden relative group" style={{ borderColor: 'var(--border)' }}>
                                  <img 
                                    src={receiptUrl} 
                                    alt="Comprobante" 
                                    className="w-full h-full object-cover transition-transform group-hover:scale-110" 
                                  />
-                                 <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                   <Eye size={16} className="text-white" />
-                                 </div>
-                                 <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 border shadow-sm text-primary scale-75 dark:bg-gray-800">
-                                   <Receipt size={14} />
+                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                   <Eye size={14} className="text-white" />
                                  </div>
                                </div>
                             </div>
                           )}
                           <div>
-                            <h3 className="font-semibold text-sm leading-tight text-gray-800 dark:text-gray-200 mb-1">{desc}</h3>
-                            <p className="text-xs text-muted">
+                            <h3 className="font-semibold text-sm leading-tight text-gray-100 mb-1">{desc}</h3>
+                            <p className="text-xs text-gray-400">
                               {isIncome ? 'Cobró' : 'Pagó'} {exp.profiles?.full_name || 'Miembro'}
                             </p>
                           </div>
                         </div>
-                        <div className="text-right shrink-0">
+                        <div className="flex flex-col items-end gap-2 shrink-0">
                           <div 
                             className="font-bold text-base" 
                             style={{ color: isIncome ? 'var(--secondary)' : 'var(--text-main)' }}
                           >
                             {isIncome ? '+' : '-'} ${(exp.amount_cents / 100).toFixed(2)}
                           </div>
+                          {canModify && (
+                            <div className="flex gap-3 print-hide">
+                              <button
+                                onClick={() => openEditExpenseModal(exp)}
+                                className="text-gray-400 hover:text-primary transition-colors p-0.5"
+                                title="Editar"
+                              >
+                                <Edit2 size={16} />
+                              </button>
+                              <button
+                                onClick={() => setShowDeleteExpenseConfirm(exp)}
+                                className="text-gray-400 hover:text-danger transition-colors p-0.5"
+                                title="Eliminar"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      
-                      {canModify && (
-                        <div className="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-100/50 dark:border-gray-800/50 print-hide">
-                          <button
-                            onClick={() => openEditExpenseModal(exp)}
-                            className="btn btn-secondary text-xs flex items-center justify-center gap-1.5"
-                            title="Editar"
-                            style={{ padding: '0.4rem 0.75rem', width: 'auto', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', border: 'none', borderRadius: '0.5rem' }}
-                          >
-                            <Edit2 size={14} /> Editar
-                          </button>
-                          <button
-                            onClick={() => setShowDeleteExpenseConfirm(exp)}
-                            className="btn btn-secondary text-xs flex items-center justify-center gap-1.5"
-                            style={{ padding: '0.4rem 0.75rem', width: 'auto', backgroundColor: 'var(--danger-light)', color: 'var(--danger)', border: 'none', borderRadius: '0.5rem' }}
-                            title="Eliminar"
-                          >
-                            <Trash2 size={14} /> Eliminar
-                          </button>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
