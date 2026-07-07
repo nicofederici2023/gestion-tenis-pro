@@ -205,63 +205,64 @@ export default function Reports() {
               const isExpanded = !!expandedGroups[group.id];
 
               return (
-                <div key={group.id} className="mb-4 bg-[#0f1423] rounded-xl border border-gray-800 overflow-hidden shadow-xl">
+                <div key={group.id} style={{ marginBottom: '1rem', backgroundColor: 'rgba(15, 20, 35, 0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
                   {/* Cabecera de la Tarjeta del Torneo */}
                   <div 
-                    className="flex justify-between items-center p-4 bg-[#131b2e] cursor-pointer hover:bg-[#1a233a] transition-colors"
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', backgroundColor: 'rgba(19, 27, 46, 0.95)', cursor: 'pointer', borderBottom: isExpanded ? '1px solid rgba(255,255,255,0.1)' : 'none' }}
                     onClick={() => toggleGroup(group.id)}
                   >
-                    <div className="flex-1 pr-4">
-                      <div className="flex items-center gap-2 mb-1">
+                    <div style={{ flex: 1, paddingRight: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
                         <Trophy size={16} className="text-success" />
-                        <h3 className="font-bold text-base text-gray-100 leading-tight">{group.name}</h3>
+                        <h3 style={{ fontWeight: 'bold', fontSize: '1rem', color: '#f8fafc', margin: 0, lineHeight: 1.2 }}>{group.name}</h3>
                       </div>
-                      <p className="text-xs text-gray-400 truncate max-w-[200px]">
+                      <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '250px' }}>
                         {group.description || 'Sin descripción'}
                       </p>
                     </div>
 
-                    <div className="text-right shrink-0">
-                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Gasto (Neto)</p>
-                      <p className="text-sm font-bold text-success flex items-center justify-end gap-1">
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <p style={{ fontSize: '0.625rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '0.05em', margin: '0 0 0.25rem 0' }}>Gasto (Neto)</p>
+                      <p style={{ fontSize: '0.875rem', fontWeight: 'bold', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.25rem', margin: 0 }}>
                         {formatCurrency(totalCents, group.currency || 'ARS')}
-                        {isExpanded ? <ChevronUp size={16} className="text-gray-400 ml-1" /> : <ChevronDown size={16} className="text-gray-400 ml-1" />}
+                        {isExpanded ? <ChevronUp size={16} color="#94a3b8" /> : <ChevronDown size={16} color="#94a3b8" />}
                       </p>
                     </div>
                   </div>
 
                   {/* Detalle de Gastos */}
                   {isExpanded && (
-                    <div className="border-t border-gray-100 dark:border-gray-800/50">
+                    <div>
                       {groupExpenses.length === 0 ? (
-                        <p className="text-xs text-muted text-center py-6">
+                        <p style={{ fontSize: '0.75rem', color: '#94a3b8', textAlign: 'center', padding: '1.5rem 0', margin: 0 }}>
                           No hay movimientos registrados en este torneo.
                         </p>
                       ) : (
-                        <div className="flex flex-col">
-                          {groupExpenses.map(exp => {
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          {groupExpenses.map((exp, idx) => {
                             const isIncome = exp.type === 'income';
+                            const isEven = idx % 2 === 0;
+                            const rowBg = isEven ? 'rgba(19, 27, 46, 0.95)' : 'rgba(23, 31, 50, 0.95)';
                             return (
-                              <div key={exp.id} className="grid grid-cols-[1fr_auto] gap-4 p-4 border-b border-gray-800/50 last:border-0 even:bg-[#131b2e] odd:bg-[#171f32] hover:bg-[#1a233a] transition-colors">
-                                <div>
-                                  <p className="font-semibold text-sm text-gray-100 mb-1.5 leading-tight">
+                              <div key={exp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', backgroundColor: rowBg, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                <div style={{ flex: 1, paddingRight: '0.5rem' }}>
+                                  <p style={{ fontWeight: '600', fontSize: '0.875rem', color: '#f8fafc', margin: '0 0 0.375rem 0', lineHeight: 1.2 }}>
                                     {cleanDescription(exp.description)}
                                   </p>
-                                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-400">
-                                    <span className="flex items-center gap-1 font-medium">
+                                  <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem', fontSize: '0.6875rem', color: '#94a3b8' }}>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: '500' }}>
                                       <Calendar size={12} />
                                       {formatDateShort(exp.date)}
                                     </span>
-                                    <span className="flex items-center gap-1 font-medium">
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: '500' }}>
                                       <User size={12} />
                                       {isIncome ? 'Cobró' : 'Pagó'} {exp.profiles?.full_name || 'Miembro'}
                                     </span>
                                   </div>
                                 </div>
-                                <div className="text-right flex items-center">
+                                <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                                   <span 
-                                    className="font-bold text-sm tracking-wide"
-                                    style={{ color: isIncome ? 'var(--secondary)' : 'var(--text-main)' }}
+                                    style={{ fontWeight: 'bold', fontSize: '0.875rem', letterSpacing: '0.025em', color: isIncome ? 'var(--secondary)' : 'var(--text-main)' }}
                                   >
                                     {isIncome ? '+' : '-'} {formatCurrency(exp.amount_cents, exp.currency || 'ARS')}
                                   </span>

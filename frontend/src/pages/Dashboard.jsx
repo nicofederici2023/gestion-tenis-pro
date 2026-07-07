@@ -275,31 +275,31 @@ export default function Dashboard() {
                 <div className="flex gap-2">
                   <div 
                     onClick={() => setNewGroupType('shared')}
-                    className="flex-1 p-2 rounded-lg border cursor-pointer transition-all"
                     style={{ 
-                      borderColor: newGroupType === 'shared' ? 'var(--primary)' : 'var(--border)',
-                      backgroundColor: newGroupType === 'shared' ? 'var(--primary-light)' : 'transparent'
+                      flex: 1, padding: '0.75rem', borderRadius: '0.75rem', border: '1px solid', cursor: 'pointer', transition: 'all 0.2s',
+                      borderColor: newGroupType === 'shared' ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
+                      backgroundColor: newGroupType === 'shared' ? 'rgba(2, 132, 199, 0.15)' : 'transparent'
                     }}
                   >
-                    <div className="font-semibold text-xs mb-1 flex items-center gap-1.5" style={{ color: newGroupType === 'shared' ? 'var(--primary)' : 'var(--text-main)' }}>
-                      <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <div style={{ fontWeight: '600', fontSize: '0.75rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem', color: newGroupType === 'shared' ? 'var(--primary)' : 'var(--text-main)' }}>
+                      <svg style={{ width: '1.25rem', height: '1.25rem', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                       Compartido
                     </div>
-                    <div className="text-[10px] text-muted leading-tight">Divide gastos automáticamente.</div>
+                    <div style={{ fontSize: '0.625rem', color: 'var(--text-muted)', lineHeight: '1.2' }}>Divide gastos automáticamente.</div>
                   </div>
                   <div 
                     onClick={() => setNewGroupType('ledger')}
-                    className="flex-1 p-2 rounded-lg border cursor-pointer transition-all"
                     style={{ 
-                      borderColor: newGroupType === 'ledger' ? 'var(--primary)' : 'var(--border)',
-                      backgroundColor: newGroupType === 'ledger' ? 'var(--primary-light)' : 'transparent'
+                      flex: 1, padding: '0.75rem', borderRadius: '0.75rem', border: '1px solid', cursor: 'pointer', transition: 'all 0.2s',
+                      borderColor: newGroupType === 'ledger' ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
+                      backgroundColor: newGroupType === 'ledger' ? 'rgba(2, 132, 199, 0.15)' : 'transparent'
                     }}
                   >
-                    <div className="font-semibold text-xs mb-1 flex items-center gap-1.5" style={{ color: newGroupType === 'ledger' ? 'var(--primary)' : 'var(--text-main)' }}>
-                      <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    <div style={{ fontWeight: '600', fontSize: '0.75rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem', color: newGroupType === 'ledger' ? 'var(--primary)' : 'var(--text-main)' }}>
+                      <svg style={{ width: '1.25rem', height: '1.25rem', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                       Solo Registro
                     </div>
-                    <div className="text-[10px] text-muted leading-tight">Como un libro contable.</div>
+                    <div style={{ fontSize: '0.625rem', color: 'var(--text-muted)', lineHeight: '1.2' }}>Como un libro contable.</div>
                   </div>
                 </div>
               </div>
@@ -342,31 +342,31 @@ export default function Dashboard() {
                 <div className="flex gap-2">
                   <div 
                     onClick={() => setEditGroupType('shared')}
-                    className="flex-1 p-2 rounded-lg border cursor-pointer transition-all"
                     style={{ 
-                      borderColor: editGroupType === 'shared' ? 'var(--primary)' : 'var(--border)',
-                      backgroundColor: editGroupType === 'shared' ? 'var(--primary-light)' : 'transparent'
+                      flex: 1, padding: '0.75rem', borderRadius: '0.75rem', border: '1px solid', cursor: 'pointer', transition: 'all 0.2s',
+                      borderColor: editGroupType === 'shared' ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
+                      backgroundColor: editGroupType === 'shared' ? 'rgba(2, 132, 199, 0.15)' : 'transparent'
                     }}
                   >
-                    <div className="font-semibold text-xs mb-1 flex items-center gap-1.5" style={{ color: editGroupType === 'shared' ? 'var(--primary)' : 'var(--text-main)' }}>
-                      <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <div style={{ fontWeight: '600', fontSize: '0.75rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem', color: editGroupType === 'shared' ? 'var(--primary)' : 'var(--text-main)' }}>
+                      <svg style={{ width: '1.25rem', height: '1.25rem', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                       Compartido
                     </div>
-                    <div className="text-[10px] text-muted leading-tight">Divide gastos automáticamente.</div>
+                    <div style={{ fontSize: '0.625rem', color: 'var(--text-muted)', lineHeight: '1.2' }}>Divide gastos automáticamente.</div>
                   </div>
                   <div 
                     onClick={() => setEditGroupType('ledger')}
-                    className="flex-1 p-2 rounded-lg border cursor-pointer transition-all"
                     style={{ 
-                      borderColor: editGroupType === 'ledger' ? 'var(--primary)' : 'var(--border)',
-                      backgroundColor: editGroupType === 'ledger' ? 'var(--primary-light)' : 'transparent'
+                      flex: 1, padding: '0.75rem', borderRadius: '0.75rem', border: '1px solid', cursor: 'pointer', transition: 'all 0.2s',
+                      borderColor: editGroupType === 'ledger' ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
+                      backgroundColor: editGroupType === 'ledger' ? 'rgba(2, 132, 199, 0.15)' : 'transparent'
                     }}
                   >
-                    <div className="font-semibold text-xs mb-1 flex items-center gap-1.5" style={{ color: editGroupType === 'ledger' ? 'var(--primary)' : 'var(--text-main)' }}>
-                      <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    <div style={{ fontWeight: '600', fontSize: '0.75rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem', color: editGroupType === 'ledger' ? 'var(--primary)' : 'var(--text-main)' }}>
+                      <svg style={{ width: '1.25rem', height: '1.25rem', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                       Solo Registro
                     </div>
-                    <div className="text-[10px] text-muted leading-tight">Como un libro contable.</div>
+                    <div style={{ fontSize: '0.625rem', color: 'var(--text-muted)', lineHeight: '1.2' }}>Como un libro contable.</div>
                   </div>
                 </div>
               </div>
