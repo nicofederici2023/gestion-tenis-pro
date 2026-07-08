@@ -1051,28 +1051,30 @@ export default function GroupDetail() {
 
       {/* Modal Ver Comprobante */}
       {viewingReceiptUrl && (
-        <div className="modal-overlay" onClick={() => setViewingReceiptUrl('')}>
-          <div className="card w-full animate-fade-in relative flex flex-col items-center p-6" style={{ maxWidth: '500px', maxHeight: 'calc(100vh - 8rem)', overflowY: 'auto' }} onClick={(e) => e.stopPropagation()}>
+        <div 
+          className="modal-overlay" 
+          onClick={() => setViewingReceiptUrl('')}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)', padding: '1rem', zIndex: 1000 }}
+        >
+          <div 
+            className="animate-fade-in w-full h-full flex flex-col relative" 
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '100%', maxHeight: '100%' }}
+          >
             <button 
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700" 
+              className="absolute top-0 right-0 text-white z-10" 
               onClick={() => setViewingReceiptUrl('')}
-              style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-muted)' }}
+              style={{ background: 'rgba(0,0,0,0.5)', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', fontSize: '2rem', cursor: 'pointer', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               &times;
             </button>
-            <h2 className="mb-4 text-center">Constancia de Gasto</h2>
-            <img 
-              src={viewingReceiptUrl} 
-              alt="Comprobante de gasto" 
-              className="w-full rounded-lg object-contain border max-h-[60vh] mb-4" 
-            />
-            <button 
-              className="btn btn-secondary" 
-              onClick={() => setViewingReceiptUrl('')}
-              style={{ width: '100%' }}
-            >
-              Cerrar
-            </button>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', width: '100%', height: '100%', paddingBottom: '2rem' }}>
+              <img 
+                src={viewingReceiptUrl} 
+                alt="Comprobante de gasto" 
+                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '0.5rem' }}
+              />
+            </div>
           </div>
         </div>
       )}
